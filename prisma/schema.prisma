@@ -1,0 +1,182 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Rôles utilisateurs
+enum UserRole {
+  AGENT           // Agent soumettant des demandes
+  SERVICE_COURRIER // Service courrier - vérification
+  SECRETARIAT_DRH  // Secrétariat DRH - traitement
+  DRH             // Directeur RH - signature
+  ADMIN           // Administrateur système
+}
+
+// Statuts des demandes
+enum DemandeStatus {
+  SOUMIS              // Soumis par l'agent
+  EN_VERIFICATION     // En cours de vérification (Courrier)
+  REJETE_COURRIER     // Rejeté par le courrier (incomplet)
+  VALIDEE_COURRIER    // Validé par le courrier
+  EN_COURS_TRAITEMENT // En cours de traitement (Secrétariat)
+  EN_ATTENTE_SIGNATURE // En attente de signature (DRH)
+  SIGNE               // Signé par le DRH
+  RETOUR_SECRETARIAT  // Retour au secrétariat
+  TRANSMIS_COURRIER   // Transmis au service courrier
+  DISPONIBLE          // Disponible pour retrait
+  RETIRE              // Retiré par l'agent
+}
+
+// Types de demandes
+enum TypeDemande {
+  CONGE_MATERNITE
+  ARRET_MALADIE
+  PERMISSION
+  ATTESTATION
+  CERTIFICAT
+  AUTRE
+}
+
+// Utilisateur
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  password      String
+  nom           String
+  prenom        String
+  role          UserRole @default(AGENT)
+  telephone     String?
+  matricule     String?  @unique
+  service       String?
+  fonction      String?
+  actif         Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  demandes      Demande[]      @relation("AgentDemandes")
+  traitements   Demande[]      @relation("Traitements")
+  notifications Notification[]
+  logs          HistoryLog[]
+
+  @@map("users")
+}
+
+// Demande / Acte administratif
+model Demande {
+  id                    String          @id @default(cuid())
+  numeroEnregistrement  String?         @unique
+  type                  TypeDemande
+  titre                 String
+  motif                 String?
+  dateDebut             DateTime?
+  dateFin               DateTime?
+  statut                DemandeStatus   @default(SOUMIS)
+  commentaires          String?
+  dateSoumission        DateTime        @default(now())
+  dateValidation        DateTime?
+  dateSignature         DateTime?
+  dateDisponibilite     DateTime?
+  dateRetrait           DateTime?
+  
+  // Relations
+  agentId               String
+  agent                 User            @relation("AgentDemandes", fields: [agentId], references: [id])
+  traiteParId           String?
+  traitePar             User?           @relation("Traitements", fields: [traiteParId], references: [id])
+  piecesJointes         PieceJointe[]
+  historique            HistoryLog[]
+  notifications         Notification[]
+
+  createdAt             DateTime        @default(now())
+  updatedAt             DateTime        @updatedAt
+
+  @@map("demandes")
+}
+
+// Pièces jointes
+model PieceJointe {
+  id          String   @id @default(cuid())
+  nom         String
+  chemin      String   // Chemin du fichier
+  type        String   // MIME type
+  taille      Int      // Taille en bytes
+  
+  demandeId   String
+  demande     Demande  @relation(fields: [demandeId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+
+  @@map("pieces_jointes")
+}
+
+// Historique / Logs
+model HistoryLog {
+  id          String   @id @default(cuid())
+  action      String
+  details     String?
+  ancienStatut String?
+  nouveauStatut String?
+  
+  demandeId   String
+  demande     Demande  @relation(fields: [demandeId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  
+  createdAt   DateTime @default(now())
+
+  @@map("history_logs")
+}
+
+// Notifications
+model Notification {
+  id          String   @id @default(cuid())
+  titre       String
+  message     String
+  lue         Boolean  @default(false)
+  type        String   // email, sms, in_app
+  
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  demandeId   String?
+  demande     Demande? @relation(fields: [demandeId], references: [id], onDelete: SetNull)
+
+  createdAt   DateTime @default(now())
+
+  @@map("notifications")
+}
+
+// Registre des entrées (Service Courrier)
+model RegistreEntree {
+  id            String   @id @default(cuid())
+  numeroEntree  String   @unique
+  dateEntree    DateTime @default(now())
+  provenance    String
+  objet         String
+  observations  String?
+  traite        Boolean  @default(false)
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("registre_entrees")
+}
+
+// Paramètres système
+model Parametre {
+  id        String   @id @default(cuid())
+  cle       String   @unique
+  valeur    String
+  description String?
+
+  updatedAt DateTime @updatedAt
+
+  @@map("parametres")
+}
