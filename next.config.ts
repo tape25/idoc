@@ -7,6 +7,15 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
   reactStrictMode: false,
+  // Configuration pour Vercel + Supabase
+  experimental: {
+    // Optimisation pour serverless
+    serverComponentsExternalPackages: ["@prisma/client", "bcryptjs"],
+  },
+  // Variables d'environnement exposées au client
+  env: {
+    NEXTAUTH_URL: process.env.NEXTAUTH_URL,
+  },
 };
 
 export default nextConfig;
