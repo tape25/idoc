@@ -1,6 +1,5 @@
 import { NextAuthOptions } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
-import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import { db } from "./db"
 import bcrypt from "bcryptjs"
 
@@ -40,7 +39,9 @@ declare module "next-auth/jwt" {
 }
 
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(db),
+  // PAS de PrismaAdapter avec CredentialsProvider + JWT
+  // L'adapter est conçu pour OAuth, pas pour les credentials
+  // On gère directement l'auth dans authorize()
   session: {
     strategy: "jwt",
   },
@@ -57,31 +58,46 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
+          console.log("Auth: email ou mot de passe manquant")
           return null
         }
 
-        const user = await db.user.findUnique({
-          where: { email: credentials.email }
-        })
+        try {
+          const user = await db.user.findUnique({
+            where: { email: credentials.email }
+          })
 
-        if (!user || !user.actif) {
+          if (!user) {
+            console.log("Auth: utilisateur non trouvé -", credentials.email)
+            return null
+          }
+
+          if (!user.actif) {
+            console.log("Auth: utilisateur inactif -", credentials.email)
+            return null
+          }
+
+          const passwordMatch = await bcrypt.compare(credentials.password, user.password)
+
+          if (!passwordMatch) {
+            console.log("Auth: mot de passe incorrect -", credentials.email)
+            return null
+          }
+
+          console.log("Auth: connexion réussie -", credentials.email, "rôle:", user.role)
+
+          return {
+            id: user.id,
+            email: user.email,
+            nom: user.nom,
+            prenom: user.prenom,
+            role: user.role,
+            matricule: user.matricule,
+            service: user.service,
+          }
+        } catch (error) {
+          console.error("Auth: erreur base de données -", error)
           return null
-        }
-
-        const passwordMatch = await bcrypt.compare(credentials.password, user.password)
-
-        if (!passwordMatch) {
-          return null
-        }
-
-        return {
-          id: user.id,
-          email: user.email,
-          nom: user.nom,
-          prenom: user.prenom,
-          role: user.role,
-          matricule: user.matricule,
-          service: user.service,
         }
       }
     })
@@ -101,15 +117,16 @@ export const authOptions: NextAuthOptions = {
     },
     async session({ session, token }) {
       if (token) {
-        session.user.id = token.id
-        session.user.email = token.email
-        session.user.nom = token.nom
-        session.user.prenom = token.prenom
-        session.user.role = token.role
-        session.user.matricule = token.matricule
-        session.user.service = token.service
+        session.user.id = token.id as string
+        session.user.email = token.email as string
+        session.user.nom = token.nom as string
+        session.user.prenom = token.prenom as string
+        session.user.role = token.role as string
+        session.user.matricule = token.matricule as string | null
+        session.user.service = token.service as string | null
       }
       return session
     }
-  }
+  },
+  debug: process.env.NODE_ENV === "development",
 }

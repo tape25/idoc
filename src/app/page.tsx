@@ -8,10 +8,25 @@ import { useEffect, useState } from "react"
 export default function Home() {
   const { data: session, status } = useSession()
   const [initialized, setInitialized] = useState(false)
+  const [seedError, setSeedError] = useState("")
 
   useEffect(() => {
     // Initialiser les utilisateurs de démonstration au premier chargement
-    fetch("/api/seed").then(() => setInitialized(true))
+    fetch("/api/seed")
+      .then(async (res) => {
+        const data = await res.json()
+        if (!res.ok) {
+          console.error("Seed error:", data)
+          setSeedError(data.details || data.error || "Erreur d'initialisation")
+        } else {
+          console.log("Seed:", data.message)
+        }
+      })
+      .catch((err) => {
+        console.error("Seed fetch error:", err)
+        setSeedError("Impossible de contacter le serveur")
+      })
+      .finally(() => setInitialized(true))
   }, [])
 
   if (status === "loading" || !initialized) {
@@ -23,7 +38,7 @@ export default function Home() {
   }
 
   if (!session) {
-    return <LoginPage />
+    return <LoginPage seedError={seedError} />
   }
 
   return <MainDashboard />
