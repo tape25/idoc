@@ -9,30 +9,10 @@ import { Loader2 } from "lucide-react"
 
 export default function Home() {
   const { data: session, status } = useSession()
-  const [initialized, setInitialized] = useState(false)
-  const [seedError, setSeedError] = useState("")
   const [showLogin, setShowLogin] = useState(false)
 
-  useEffect(() => {
-    // Initialiser les utilisateurs de démonstration au premier chargement
-    fetch("/api/seed")
-      .then(async (res) => {
-        const data = await res.json()
-        if (!res.ok) {
-          console.error("Seed error:", data)
-          setSeedError(data.details || data.error || "Erreur d'initialisation")
-        } else {
-          console.log("Seed:", data.message)
-        }
-      })
-      .catch((err) => {
-        console.error("Seed fetch error:", err)
-        setSeedError("Impossible de contacter le serveur")
-      })
-      .finally(() => setInitialized(true))
-  }, [])
-
-  if (status === "loading" || !initialized) {
+  // Wait until we know the session status to avoid flickering the Landing/Dashboard
+  if (status === "loading") {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-50 via-white to-emerald-50">
         <Loader2 className="h-12 w-12 animate-spin text-emerald-600" />
@@ -55,10 +35,32 @@ export default function Home() {
             ← Retour à l'accueil
           </button>
         </div>
-        <LoginPage seedError={seedError} />
+        {/* We move seed logic into LoginPage itself to not block anything here */}
+        <LoginPageWithSeed />
       </div>
     )
   }
 
   return <LandingPage onLoginClick={() => setShowLogin(true)} />
+}
+
+function LoginPageWithSeed() {
+  const [seedError, setSeedError] = useState("")
+
+  useEffect(() => {
+    fetch("/api/seed")
+      .then(async (res) => {
+        const data = await res.json()
+        if (!res.ok) {
+          console.error("Seed error:", data)
+          setSeedError(data.details || data.error || "Erreur d'initialisation")
+        }
+      })
+      .catch((err) => {
+        console.error("Seed fetch error:", err)
+        setSeedError("Impossible de contacter le serveur")
+      })
+  }, [])
+
+  return <LoginPage seedError={seedError} />
 }
