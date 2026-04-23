@@ -3,12 +3,15 @@
 import { useSession } from "next-auth/react"
 import { LoginPage } from "./login-page"
 import { MainDashboard } from "@/components/dashboard/main-dashboard"
+import { LandingPage } from "./landing-page"
 import { useEffect, useState } from "react"
+import { Loader2 } from "lucide-react"
 
 export default function Home() {
   const { data: session, status } = useSession()
   const [initialized, setInitialized] = useState(false)
   const [seedError, setSeedError] = useState("")
+  const [showLogin, setShowLogin] = useState(false)
 
   useEffect(() => {
     // Initialiser les utilisateurs de démonstration au premier chargement
@@ -31,15 +34,31 @@ export default function Home() {
 
   if (status === "loading" || !initialized) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-50 via-white to-emerald-50">
+        <Loader2 className="h-12 w-12 animate-spin text-emerald-600" />
       </div>
     )
   }
 
-  if (!session) {
-    return <LoginPage seedError={seedError} />
+  if (session) {
+    return <MainDashboard />
   }
 
-  return <MainDashboard />
+  if (showLogin) {
+    return (
+      <div className="relative min-h-screen w-full">
+        <div className="absolute top-6 left-6 z-50">
+          <button 
+            onClick={() => setShowLogin(false)}
+            className="flex items-center gap-2 text-emerald-700 hover:text-emerald-900 bg-white/90 backdrop-blur-md px-4 py-2 rounded-full shadow-md transition-all hover:scale-105"
+          >
+            ← Retour à l'accueil
+          </button>
+        </div>
+        <LoginPage seedError={seedError} />
+      </div>
+    )
+  }
+
+  return <LandingPage onLoginClick={() => setShowLogin(true)} />
 }
