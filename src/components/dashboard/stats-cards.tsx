@@ -74,7 +74,7 @@ export function StatsCards({ stats, role }: StatsCardsProps) {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-500">{stat.label}</p>
-                  <p className="text-2xl font-bold">{stat.value}</p>
+                  <p className="text-2xl font-bold">{stat.value as number}</p>
                 </div>
                 <div className={`p-3 rounded-full ${stat.color}`}>
                   <Icon className="h-5 w-5" />

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 // Script pour tester différentes configurations de connexion Supabase
 // Exécutez avec: node test-db-connection.js
 

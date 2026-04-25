@@ -4,7 +4,7 @@ import { motion } from "framer-motion"
 import { Building2, Users, FileText, Activity, ArrowRight, ChevronRight, GlobeLock } from "lucide-react"
 
 export function LandingPage({ onLoginClick }: { onLoginClick: () => void }) {
-  const containerVariants = {
+  const containerVariants: any = {
     hidden: { opacity: 0 },
     visible: { 
       opacity: 1, 
@@ -12,7 +12,7 @@ export function LandingPage({ onLoginClick }: { onLoginClick: () => void }) {
     }
   }
 
-  const itemVariants = {
+  const itemVariants: any = {
     hidden: { opacity: 0, y: 30 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
   }
