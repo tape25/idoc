@@ -14,6 +14,17 @@ import {
   Sparkles
 } from "lucide-react"
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+
 import { Sidebar } from "./sidebar"
 import { DemandeForm } from "./demande-form"
 import { DemandeList } from "./demande-list"
@@ -78,6 +89,7 @@ export function MainDashboard() {
   const [selectedDemande, setSelectedDemande] = useState<Demande | null>(null)
   const [showHistorique, setShowHistorique] = useState(false)
   const [showNewForm, setShowNewForm] = useState(false)
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
 
   const user = session?.user as User | undefined
 
@@ -193,7 +205,7 @@ export function MainDashboard() {
             <Button 
               variant="ghost" 
               size="icon"
-              onClick={() => signOut({ callbackUrl: "/" })}
+              onClick={() => setShowLogoutConfirm(true)}
               className="text-gray-400 hover:text-red-600 hover:bg-red-50 sm:hidden rounded-xl"
             >
               <LogOut className="h-5 w-5" />
@@ -201,7 +213,7 @@ export function MainDashboard() {
             
             <Button 
               variant="ghost" 
-              onClick={() => signOut({ callbackUrl: "/" })}
+              onClick={() => setShowLogoutConfirm(true)}
               className="hidden sm:flex text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-xl font-medium px-4"
             >
               <LogOut className="h-4 w-4 mr-2" />
@@ -223,7 +235,7 @@ export function MainDashboard() {
               setIsMobileMenuOpen(false)
             }} 
             userRole={user?.role || ""} 
-            onLogout={() => signOut({ callbackUrl: "/" })}
+            onLogout={() => setShowLogoutConfirm(true)}
           />
         </div>
 
@@ -244,7 +256,7 @@ export function MainDashboard() {
                   setIsMobileMenuOpen(false)
                 }} 
                 userRole={user?.role || ""} 
-                onLogout={() => signOut({ callbackUrl: "/" })}
+                onLogout={() => setShowLogoutConfirm(true)}
               />
             </div>
           </div>
@@ -367,6 +379,28 @@ export function MainDashboard() {
           }}
         />
       )}
+
+      {/* Logout Confirmation */}
+      <AlertDialog open={showLogoutConfirm} onOpenChange={setShowLogoutConfirm}>
+        <AlertDialogContent className="bg-white rounded-3xl border-gray-100 shadow-2xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-xl font-bold text-gray-900">Confirmation de déconnexion</AlertDialogTitle>
+            <AlertDialogDescription className="text-gray-500 text-base">
+              Êtes-vous sûr de vouloir vous déconnecter de votre espace DRH Sports ?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="mt-6 gap-3 sm:gap-0">
+            <AlertDialogCancel className="rounded-xl border-gray-200 text-gray-600 hover:bg-gray-50 h-11">Annuler</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={() => signOut({ callbackUrl: "/" })}
+              className="rounded-xl bg-red-600 hover:bg-red-700 text-white shadow-md shadow-red-600/20 h-11"
+            >
+              <LogOut className="h-4 w-4 mr-2" />
+              Se déconnecter
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }
