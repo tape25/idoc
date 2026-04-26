@@ -9,7 +9,8 @@ import {
   LogOut,
   Plus,
   Menu,
-  X
+  X,
+  Clock
 } from "lucide-react"
 
 import { Sidebar } from "./sidebar"
