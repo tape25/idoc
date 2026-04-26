@@ -4,6 +4,8 @@ import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { 
   Eye, 
   Check, 
@@ -13,7 +15,10 @@ import {
   Clock,
   FileText,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  Search,
+  Filter,
+  Printer
 } from "lucide-react"
 
 interface Demande {
@@ -91,11 +96,21 @@ const typeLabels: Record<string, string> = {
 export function DemandeList({ demandes, userRole, onAction, onViewHistorique }: DemandeListProps) {
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [processing, setProcessing] = useState<string | null>(null)
+  
+  // Nouveaux états de filtre
+  const [searchTerm, setSearchTerm] = useState("")
+  const [filterStatut, setFilterStatut] = useState("TOUS")
+  const [filterType, setFilterType] = useState("TOUS")
 
   const handleAction = async (id: string, action: string) => {
     setProcessing(id)
     await onAction(id, action)
     setProcessing(null)
+  }
+
+  const handlePrint = (demande: Demande) => {
+    // Dans une version complète, on générerait un PDF ou on ouvrirait une page d'impression
+    window.print()
   }
 
   const getActionsForRole = (demande: Demande) => {
@@ -146,128 +161,194 @@ export function DemandeList({ demandes, userRole, onAction, onViewHistorique }: 
     return actions
   }
 
-  if (demandes.length === 0) {
-    return (
-      <Card>
-        <CardContent className="py-12 text-center text-gray-500">
-          <FileText className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-          <p>Aucune demande à afficher</p>
-        </CardContent>
-      </Card>
-    )
-  }
+  // Filtrer les demandes
+  const filteredDemandes = demandes.filter((d) => {
+    const matchesSearch = 
+      d.titre.toLowerCase().includes(searchTerm.toLowerCase()) || 
+      (d.numeroEnregistrement?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false) ||
+      (d.agent?.nom.toLowerCase().includes(searchTerm.toLowerCase()) ?? false) ||
+      (d.agent?.prenom.toLowerCase().includes(searchTerm.toLowerCase()) ?? false)
+    
+    const matchesStatut = filterStatut === "TOUS" || d.statut === filterStatut
+    const matchesType = filterType === "TOUS" || d.type === filterType
+
+    return matchesSearch && matchesStatut && matchesType
+  })
 
   return (
-    <div className="space-y-3">
-      {demandes.map((demande) => {
-        const isExpanded = expandedId === demande.id
-        const actions = getActionsForRole(demande)
-        const isProcessing = processing === demande.id
+    <div className="space-y-4">
+      {/* Barre de Recherche et Filtres */}
+      <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 flex flex-col md:flex-row gap-4 items-center justify-between">
+        <div className="relative w-full md:w-1/3">
+          <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+          <Input 
+            placeholder="Chercher une demande..." 
+            className="pl-9"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+        
+        <div className="flex w-full md:w-auto gap-2">
+          <Select value={filterStatut} onValueChange={setFilterStatut}>
+            <SelectTrigger className="w-[180px]">
+              <Filter className="mr-2 h-4 w-4 text-gray-500" />
+              <SelectValue placeholder="Filtrer par statut" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="TOUS">Tous les statuts</SelectItem>
+              {Object.keys(statusLabels).map(key => (
+                <SelectItem key={key} value={key}>{statusLabels[key]}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
-        return (
-          <Card key={demande.id} className="hover:shadow-md transition-shadow">
-            <CardHeader className="pb-2">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <Badge className={`${statusColors[demande.statut]} text-white`}>
-                      {statusLabels[demande.statut]}
-                    </Badge>
-                    <span className="text-xs text-gray-500">
-                      {demande.numeroEnregistrement}
-                    </span>
-                  </div>
-                  <CardTitle className="text-base">{demande.titre}</CardTitle>
-                  <div className="flex items-center gap-4 mt-1 text-sm text-gray-500">
-                    <span>{typeLabels[demande.type] || demande.type}</span>
-                    <span className="flex items-center gap-1">
-                      <Clock className="h-3 w-3" />
-                      {new Date(demande.dateSoumission).toLocaleDateString("fr-FR")}
-                    </span>
-                  </div>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setExpandedId(isExpanded ? null : demande.id)}
-                >
-                  {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                </Button>
-              </div>
-            </CardHeader>
+          <Select value={filterType} onValueChange={setFilterType}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Type de demande" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="TOUS">Tous les types</SelectItem>
+              {Object.keys(typeLabels).map(key => (
+                <SelectItem key={key} value={key}>{typeLabels[key]}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
 
-            {isExpanded && (
-              <CardContent className="pt-0 border-t">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
-                  {/* Info agent */}
-                  {demande.agent && (
-                    <div>
-                      <h4 className="font-medium text-sm mb-2">Agent</h4>
-                      <div className="text-sm text-gray-600 space-y-1">
-                        <p>{demande.agent.prenom} {demande.agent.nom}</p>
-                        <p>Matricule: {demande.agent.matricule || "-"}</p>
-                        <p>Service: {demande.agent.service || "-"}</p>
-                        <p>Email: {demande.agent.email}</p>
+      {filteredDemandes.length === 0 ? (
+        <Card>
+          <CardContent className="py-12 text-center text-gray-500">
+            <FileText className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+            <p>Aucune demande correspondante</p>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="space-y-3">
+          {filteredDemandes.map((demande) => {
+            const isExpanded = expandedId === demande.id
+            const actions = getActionsForRole(demande)
+            const isProcessing = processing === demande.id
+
+            return (
+              <Card key={demande.id} className="hover:shadow-md transition-shadow">
+                <CardHeader className="pb-2">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <Badge className={`${statusColors[demande.statut]} text-white`}>
+                          {statusLabels[demande.statut]}
+                        </Badge>
+                        <span className="text-xs text-gray-500 font-mono">
+                          {demande.numeroEnregistrement || "NON ENREGISTRÉ"}
+                        </span>
+                      </div>
+                      <CardTitle className="text-base">{demande.titre}</CardTitle>
+                      <div className="flex items-center gap-4 mt-1 text-sm text-gray-500">
+                        <span>{typeLabels[demande.type] || demande.type}</span>
+                        <span className="flex items-center gap-1">
+                          <Clock className="h-3 w-3" />
+                          {new Date(demande.dateSoumission).toLocaleDateString("fr-FR")}
+                        </span>
                       </div>
                     </div>
-                  )}
-
-                  {/* Détails demande */}
-                  <div>
-                    <h4 className="font-medium text-sm mb-2">Détails</h4>
-                    <div className="text-sm text-gray-600 space-y-1">
-                      <p>Motif: {demande.motif || "-"}</p>
-                      {demande.dateDebut && (
-                        <p>Du: {new Date(demande.dateDebut).toLocaleDateString("fr-FR")}</p>
-                      )}
-                      {demande.dateFin && (
-                        <p>Au: {new Date(demande.dateFin).toLocaleDateString("fr-FR")}</p>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Pièces jointes */}
-                  {demande.piecesJointes && demande.piecesJointes.length > 0 && (
-                    <div>
-                      <h4 className="font-medium text-sm mb-2">Pièces jointes</h4>
-                      <div className="text-sm text-gray-600">
-                        {demande.piecesJointes.map((pj, i) => (
-                          <p key={i}>{pj.nom}</p>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Actions */}
-                <div className="flex flex-wrap gap-2 pt-4 border-t">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => onViewHistorique(demande)}
-                  >
-                    <Eye className="h-4 w-4 mr-2" />
-                    Historique
-                  </Button>
-                  
-                  {actions.map((action, i) => (
                     <Button
-                      key={i}
-                      variant={action.variant}
+                      variant="ghost"
                       size="sm"
-                      onClick={() => handleAction(demande.id, action.action)}
-                      disabled={isProcessing}
+                      onClick={() => setExpandedId(isExpanded ? null : demande.id)}
                     >
-                      {action.icon}
-                      <span className="ml-2">{action.label}</span>
+                      {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                     </Button>
-                  ))}
-                </div>
-              </CardContent>
-            )}
-          </Card>
-        )
-      })}
+                  </div>
+                </CardHeader>
+
+                {isExpanded && (
+                  <CardContent className="pt-0 border-t print:block">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
+                      {/* Info agent */}
+                      {demande.agent && (
+                        <div>
+                          <h4 className="font-medium text-sm mb-2 text-gray-800 border-b pb-1">Demandeur</h4>
+                          <div className="text-sm text-gray-600 space-y-1 mt-2">
+                            <p className="font-semibold">{demande.agent.prenom} {demande.agent.nom}</p>
+                            <p>Matricule: {demande.agent.matricule || "-"}</p>
+                            <p>Service: {demande.agent.service || "-"}</p>
+                            <p>Email: {demande.agent.email}</p>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Détails demande */}
+                      <div>
+                        <h4 className="font-medium text-sm mb-2 text-gray-800 border-b pb-1">Détails de la demande</h4>
+                        <div className="text-sm text-gray-600 space-y-1 mt-2">
+                          <p><span className="font-medium">Motif:</span> {demande.motif || "-"}</p>
+                          {demande.dateDebut && (
+                            <p><span className="font-medium">Du:</span> {new Date(demande.dateDebut).toLocaleDateString("fr-FR")}</p>
+                          )}
+                          {demande.dateFin && (
+                            <p><span className="font-medium">Au:</span> {new Date(demande.dateFin).toLocaleDateString("fr-FR")}</p>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Pièces jointes */}
+                      {demande.piecesJointes && demande.piecesJointes.length > 0 && (
+                        <div className="md:col-span-2">
+                          <h4 className="font-medium text-sm mb-2 text-gray-800 border-b pb-1">Pièces jointes</h4>
+                          <div className="text-sm text-emerald-600 mt-2 flex flex-wrap gap-2">
+                            {demande.piecesJointes.map((pj, i) => (
+                              <Badge key={i} variant="outline" className="bg-emerald-50 cursor-pointer hover:bg-emerald-100">
+                                <FileText className="h-3 w-3 mr-1" /> {pj.nom}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex flex-wrap gap-2 pt-4 border-t print:hidden">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handlePrint(demande)}
+                        className="text-gray-600"
+                      >
+                        <Printer className="h-4 w-4 mr-2" />
+                        Imprimer
+                      </Button>
+                      
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        onClick={() => onViewHistorique(demande)}
+                      >
+                        <Eye className="h-4 w-4 mr-2" />
+                        Historique
+                      </Button>
+                      
+                      {actions.map((action, i) => (
+                        <Button
+                          key={i}
+                          variant={action.variant}
+                          size="sm"
+                          onClick={() => handleAction(demande.id, action.action)}
+                          disabled={isProcessing}
+                        >
+                          {action.icon}
+                          <span className="ml-2">{action.label}</span>
+                        </Button>
+                      ))}
+                    </div>
+                  </CardContent>
+                )}
+              </Card>
+            )
+          })}
+        </div>
+      )}
     </div>
   )
 }

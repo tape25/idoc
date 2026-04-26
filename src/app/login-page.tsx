@@ -122,16 +122,7 @@ export function LoginPage({ seedError }: { seedError?: string }) {
               </Button>
             </form>
 
-            <div className="mt-6 pt-4 border-t text-center text-sm text-muted-foreground">
-              <p>Comptes de démonstration :</p>
-              <div className="mt-2 text-xs space-y-1">
-                <p><strong>Admin:</strong> admin@sports.gouv.ci / admin123</p>
-                <p><strong>Agent:</strong> agent@sports.gouv.ci / agent123</p>
-                <p><strong>Courrier:</strong> courrier@sports.gouv.ci / courrier123</p>
-                <p><strong>Secrétariat:</strong> secretariat@sports.gouv.ci / secret123</p>
-                <p><strong>DRH:</strong> drh@sports.gouv.ci / drh123</p>
-              </div>
-            </div>
+
           </CardContent>
         </Card>
       </main>
@@ -141,6 +132,15 @@ export function LoginPage({ seedError }: { seedError?: string }) {
         <p>© {new Date().getFullYear()} Ministère des Sports - Direction des Ressources Humaines</p>
         <p className="text-emerald-300 text-xs mt-1">République de Côte d'Ivoire - Union - Discipline - Travail</p>
       </footer>
+
+      {/* Loading Overlay */}
+      {loading && (
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-emerald-900/80 backdrop-blur-sm text-white">
+          <Loader2 className="h-16 w-16 animate-spin text-emerald-400 mb-4" />
+          <h2 className="text-2xl font-semibold mb-2">Connexion en cours...</h2>
+          <p className="text-emerald-200">Préparation de votre espace de travail sécurisé</p>
+        </div>
+      )}
     </div>
   )
 }

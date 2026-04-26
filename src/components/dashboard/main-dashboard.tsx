@@ -4,24 +4,23 @@ import { useEffect, useState } from "react"
 import { useSession, signOut } from "next-auth/react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { 
   Building2, 
-  LogOut, 
-  FileText, 
-  Clock,
-  BarChart3,
+  LogOut,
   Plus,
-  Users,
-  Settings,
-  PenTool,
-  RefreshCw
+  Menu,
+  X
 } from "lucide-react"
+
+import { Sidebar } from "./sidebar"
 import { DemandeForm } from "./demande-form"
 import { DemandeList } from "./demande-list"
 import { StatsCards } from "./stats-cards"
 import { NotificationPanel } from "./notification-panel"
 import { HistoriqueModal } from "./historique-modal"
+import { UsersManagement } from "./users-management"
+import { SettingsPanel } from "./settings-panel"
+import { ProfilePanel } from "./profile-panel"
 
 interface User {
   id: string
@@ -70,6 +69,11 @@ export function MainDashboard() {
   const [stats, setStats] = useState<Stats>({})
   const [demandes, setDemandes] = useState<Demande[]>([])
   const [loading, setLoading] = useState(true)
+  
+  // Nouveaux états de layout
+  const [activeTab, setActiveTab] = useState("dashboard")
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  
   const [selectedDemande, setSelectedDemande] = useState<Demande | null>(null)
   const [showHistorique, setShowHistorique] = useState(false)
   const [showNewForm, setShowNewForm] = useState(false)
@@ -123,20 +127,11 @@ export function MainDashboard() {
     return roles[role] || role
   }
 
-  const getRoleIcon = (role: string) => {
-    switch (role) {
-      case "ADMIN": return <Settings className="h-5 w-5" />
-      case "DRH": return <PenTool className="h-5 w-5" />
-      case "SECRETARIAT_DRH": return <FileText className="h-5 w-5" />
-      case "SERVICE_COURRIER": return <RefreshCw className="h-5 w-5" />
-      default: return <Users className="h-5 w-5" />
-    }
-  }
-
   if (status === "loading" || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-emerald-50">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-emerald-600 mb-4"></div>
+        <p className="text-emerald-800 font-medium animate-pulse">Chargement de votre espace de travail...</p>
       </div>
     )
   }
@@ -149,21 +144,29 @@ export function MainDashboard() {
     <div className="min-h-screen flex flex-col bg-gray-50">
       {/* Header */}
       <header className="bg-emerald-700 text-white shadow-lg sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+        <div className="max-w-full mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Building2 className="h-8 w-8" />
+            {/* Bouton Menu Mobile */}
+            <Button 
+              variant="ghost" 
+              className="md:hidden text-white hover:bg-emerald-600 p-1 mr-2"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+              {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </Button>
+            
+            <Building2 className="h-8 w-8 hidden sm:block" />
             <div>
-              <h1 className="text-lg font-bold">DRH - Ministère des Sports</h1>
-              <p className="text-emerald-200 text-xs">Côte d'Ivoire</p>
+              <h1 className="text-sm sm:text-lg font-bold line-clamp-1">DRH - Ministère des Sports</h1>
+              <p className="text-emerald-200 text-xs hidden sm:block">Côte d'Ivoire</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
             <NotificationPanel />
             
-            <div className="flex items-center gap-2 bg-emerald-600 rounded-lg px-3 py-2">
-              {getRoleIcon(user?.role || "")}
-              <div className="text-sm">
+            <div className="hidden sm:flex items-center gap-2 bg-emerald-600 rounded-lg px-3 py-2">
+              <div className="text-sm text-right">
                 <p className="font-medium">{user?.prenom} {user?.nom}</p>
                 <p className="text-emerald-200 text-xs">{getRoleName(user?.role || "")}</p>
               </div>
@@ -171,9 +174,18 @@ export function MainDashboard() {
 
             <Button 
               variant="ghost" 
+              size="icon"
+              onClick={() => signOut({ callbackUrl: "/" })}
+              className="text-white hover:bg-emerald-600 sm:hidden"
+            >
+              <LogOut className="h-5 w-5" />
+            </Button>
+            
+            <Button 
+              variant="ghost" 
               size="sm"
               onClick={() => signOut({ callbackUrl: "/" })}
-              className="text-white hover:bg-emerald-600"
+              className="text-white hover:bg-emerald-600 hidden sm:flex"
             >
               <LogOut className="h-4 w-4 mr-2" />
               Déconnexion
@@ -182,72 +194,131 @@ export function MainDashboard() {
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="flex-1 max-w-7xl mx-auto w-full px-4 py-6">
-        {/* Stats Cards */}
-        <StatsCards stats={stats} role={user?.role || ""} />
+      {/* Main Layout with Sidebar */}
+      <div className="flex flex-1">
+        {/* Sidebar Desktop */}
+        <Sidebar 
+          activeTab={activeTab} 
+          setActiveTab={(tab) => {
+            setActiveTab(tab)
+            setIsMobileMenuOpen(false)
+          }} 
+          userRole={user?.role || ""} 
+          onLogout={() => signOut({ callbackUrl: "/" })}
+        />
 
-        {/* Actions selon le rôle */}
-        {user?.role === "AGENT" && (
-          <div className="mb-6">
-            <Button 
-              onClick={() => setShowNewForm(true)} 
-              className="bg-emerald-600 hover:bg-emerald-700"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Nouvelle demande
-            </Button>
+        {/* Sidebar Mobile Overlay */}
+        {isMobileMenuOpen && (
+          <div className="fixed inset-0 z-40 bg-black/50 md:hidden" onClick={() => setIsMobileMenuOpen(false)}>
+            <div className="fixed inset-y-0 left-0 w-64 bg-white shadow-xl flex flex-col" onClick={e => e.stopPropagation()}>
+              {/* Le contenu est géré en clonant la Sidebar mais visible sur mobile */}
+              <Sidebar 
+                activeTab={activeTab} 
+                setActiveTab={(tab) => {
+                  setActiveTab(tab)
+                  setIsMobileMenuOpen(false)
+                }} 
+                userRole={user?.role || ""} 
+                onLogout={() => signOut({ callbackUrl: "/" })}
+              />
+            </div>
           </div>
         )}
 
-        {/* Tabs */}
-        <Tabs defaultValue="demandes" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 max-w-md">
-            <TabsTrigger value="demandes">
-              <FileText className="h-4 w-4 mr-2" />
-              Demandes
-            </TabsTrigger>
-            <TabsTrigger value="historique">
-              <Clock className="h-4 w-4 mr-2" />
-              Historique
-            </TabsTrigger>
-            {user?.role === "ADMIN" && (
-              <TabsTrigger value="stats">
-                <BarChart3 className="h-4 w-4 mr-2" />
-                Stats
-              </TabsTrigger>
-            )}
-          </TabsList>
-
-          <TabsContent value="demandes" className="mt-6">
-            <DemandeList 
-              demandes={demandes}
-              userRole={user?.role || ""}
-              onAction={handleAction}
-              onViewHistorique={(d) => {
-                setSelectedDemande(d)
-                setShowHistorique(true)
-              }}
-            />
-          </TabsContent>
-
-          <TabsContent value="historique" className="mt-6">
-            <HistoriqueTab demandes={demandes} />
-          </TabsContent>
-
-          {user?.role === "ADMIN" && (
-            <TabsContent value="stats" className="mt-6">
-              <StatsTab stats={stats} />
-            </TabsContent>
+        {/* Contenu Principal */}
+        <main className="flex-1 p-4 sm:p-6 w-full max-w-7xl overflow-x-hidden">
+          
+          {/* Dashboard Principal (Stats) */}
+          {activeTab === "dashboard" && (
+            <div className="space-y-6 animate-in fade-in duration-300">
+              <div className="flex justify-between items-center mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-800">Vue d'ensemble</h2>
+                  <p className="text-gray-500 text-sm">Bienvenue dans votre espace de travail</p>
+                </div>
+                {user?.role === "AGENT" && (
+                  <Button 
+                    onClick={() => setShowNewForm(true)} 
+                    className="bg-emerald-600 hover:bg-emerald-700"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Nouvelle demande
+                  </Button>
+                )}
+              </div>
+              <StatsCards stats={stats} role={user?.role || ""} />
+              
+              {user?.role === "ADMIN" && (
+                <div className="mt-8">
+                  <h3 className="text-lg font-semibold mb-4 text-gray-700">Analytique avancée</h3>
+                  <StatsTab stats={stats} />
+                </div>
+              )}
+            </div>
           )}
-        </Tabs>
-      </main>
 
-      {/* Footer */}
-      <footer className="bg-emerald-800 text-emerald-100 py-4 px-6 text-center text-sm">
-        <p>© {new Date().getFullYear()} Ministère des Sports - Direction des Ressources Humaines</p>
-        <p className="text-emerald-300 text-xs mt-1">République de Côte d'Ivoire - Union - Discipline - Travail</p>
-      </footer>
+          {/* Onglet Demandes */}
+          {activeTab === "demandes" && (
+            <div className="space-y-4 animate-in fade-in duration-300">
+              <div className="flex justify-between items-center mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-800">Gestion des Demandes</h2>
+                  <p className="text-gray-500 text-sm">Consultez et traitez les actes administratifs</p>
+                </div>
+                {user?.role === "AGENT" && (
+                  <Button 
+                    onClick={() => setShowNewForm(true)} 
+                    className="bg-emerald-600 hover:bg-emerald-700"
+                  >
+                    <Plus className="h-4 w-4 sm:mr-2" />
+                    <span className="hidden sm:inline">Nouvelle demande</span>
+                  </Button>
+                )}
+              </div>
+              <DemandeList 
+                demandes={demandes}
+                userRole={user?.role || ""}
+                onAction={handleAction}
+                onViewHistorique={(d) => {
+                  setSelectedDemande(d)
+                  setShowHistorique(true)
+                }}
+              />
+            </div>
+          )}
+
+          {/* Onglet Historique Global */}
+          {activeTab === "historique" && (
+            <div className="space-y-4 animate-in fade-in duration-300">
+              <h2 className="text-2xl font-bold text-gray-800 mb-6">Historique Global</h2>
+              <HistoriqueTab demandes={demandes} />
+            </div>
+          )}
+
+          {/* Onglet Utilisateurs */}
+          {activeTab === "utilisateurs" && user?.role === "ADMIN" && (
+            <div className="animate-in fade-in duration-300">
+              <UsersManagement />
+            </div>
+          )}
+
+          {/* Onglet Paramètres */}
+          {activeTab === "parametres" && (user?.role === "ADMIN" || user?.role === "DRH") && (
+            <div className="animate-in fade-in duration-300">
+              <SettingsPanel />
+            </div>
+          )}
+
+          {/* Onglet Profil */}
+          {activeTab === "profil" && (
+            <div className="animate-in fade-in duration-300">
+              <h2 className="text-2xl font-bold text-gray-800 mb-6">Mon Profil</h2>
+              <ProfilePanel />
+            </div>
+          )}
+
+        </main>
+      </div>
 
       {/* Modals */}
       {showNewForm && (
@@ -290,23 +361,36 @@ function HistoriqueTab({ demandes }: { demandes: Demande[] }) {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow p-4">
-      <h3 className="font-semibold text-lg mb-4">Historique récent</h3>
-      <div className="space-y-3 max-h-96 overflow-y-auto">
-        {demandes.flatMap(d => d.historique || []).slice(0, 20).map((h, i) => (
-          <div key={i} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-            <div className={`w-2 h-2 mt-2 rounded-full ${statusColors[h.nouveauStatut] || "bg-gray-400"}`} />
-            <div className="flex-1">
-              <p className="font-medium text-sm">{h.action}</p>
-              <p className="text-xs text-gray-500">
-                Par {h.user.prenom} {h.user.nom} • {new Date(h.createdAt).toLocaleString("fr-FR")}
+    <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-4 sm:p-6">
+      <div className="space-y-4">
+        {demandes.flatMap(d => (d.historique || []).map(h => ({ ...h, demandeRef: d.numeroEnregistrement || "Non enregistré" })))
+          .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+          .slice(0, 50)
+          .map((h, i) => (
+          <div key={i} className="flex items-start gap-4 p-4 hover:bg-gray-50 transition-colors border-b last:border-0">
+            <div className={`w-3 h-3 mt-1.5 rounded-full shadow-sm flex-shrink-0 ${statusColors[h.nouveauStatut] || "bg-gray-400"}`} />
+            <div className="flex-1 min-w-0">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1">
+                <p className="font-semibold text-gray-900 text-sm">{h.action}</p>
+                <p className="text-xs text-gray-500 font-mono whitespace-nowrap">{new Date(h.createdAt).toLocaleString("fr-FR")}</p>
+              </div>
+              <p className="text-xs text-gray-500 mt-1">
+                Demande: <span className="font-mono text-emerald-600">{h.demandeRef}</span> • 
+                Modifié par: <span className="font-medium text-gray-700">{h.user.prenom} {h.user.nom}</span> ({h.user.role})
               </p>
-              {h.details && <p className="text-xs text-gray-600 mt-1">{h.details}</p>}
+              {h.details && (
+                <div className="mt-2 p-2 bg-gray-50 rounded text-xs text-gray-700 border border-gray-100">
+                  {h.details}
+                </div>
+              )}
             </div>
           </div>
         ))}
         {demandes.flatMap(d => d.historique || []).length === 0 && (
-          <p className="text-gray-500 text-center py-8">Aucun historique disponible</p>
+          <div className="py-12 flex flex-col items-center justify-center text-gray-500">
+            <Clock className="h-12 w-12 text-gray-300 mb-3" />
+            <p>Aucun historique disponible dans le système.</p>
+          </div>
         )}
       </div>
     </div>
@@ -332,26 +416,26 @@ function StatsTab({ stats }: { stats: Stats }) {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div className="bg-white rounded-lg shadow p-4">
-        <h3 className="font-semibold text-lg mb-4">Répartition par statut</h3>
-        <div className="space-y-2">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+        <h3 className="font-semibold text-lg mb-4 text-gray-800">Répartition par statut</h3>
+        <div className="space-y-3">
           {stats.parStatut && Object.entries(stats.parStatut as Record<string, number>).map(([key, value]) => (
-            <div key={key} className="flex justify-between items-center">
-              <span className="text-sm">{statusLabels[key] || key}</span>
-              <Badge>{value}</Badge>
+            <div key={key} className="flex justify-between items-center group">
+              <span className="text-sm text-gray-600 group-hover:text-emerald-700 transition-colors">{statusLabels[key] || key}</span>
+              <Badge variant="secondary" className="bg-gray-100">{value}</Badge>
             </div>
           ))}
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow p-4">
-        <h3 className="font-semibold text-lg mb-4">Répartition par type</h3>
-        <div className="space-y-2">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+        <h3 className="font-semibold text-lg mb-4 text-gray-800">Répartition par type</h3>
+        <div className="space-y-3">
           {stats.parType && Object.entries(stats.parType as Record<string, number>).map(([key, value]) => (
-            <div key={key} className="flex justify-between items-center">
-              <span className="text-sm">{typeLabels[key] || key}</span>
-              <Badge>{value}</Badge>
+            <div key={key} className="flex justify-between items-center group">
+              <span className="text-sm text-gray-600 group-hover:text-emerald-700 transition-colors">{typeLabels[key] || key}</span>
+              <Badge variant="outline" className="text-emerald-700 border-emerald-200">{value}</Badge>
             </div>
           ))}
         </div>
