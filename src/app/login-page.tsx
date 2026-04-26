@@ -88,7 +88,7 @@ export function LoginPage({ seedError }: { seedError?: string }) {
 
         {/* Main Illustration Container */}
         <div className="relative z-10 mt-16 w-[120%] h-[600px] animate-in fade-in zoom-in-95 duration-1000 -ml-[10%]">
-          <Spline scene="https://prod.spline.design/iOtwB-iA2hZqB32z/scene.splinecode" />
+          <Spline scene="https://prod.spline.design/6Wq1Q7YGyM-iab9i/scene.splinecode" />
         </div>
 
         {/* Decorative elements */}
