@@ -115,10 +115,7 @@ export function LoginPage({ seedError }: { seedError?: string }) {
             </div>
             
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="password" className="text-sm font-semibold text-gray-700">Mot de passe</Label>
-                <a href="#" className="text-sm font-medium text-ivorange-600 hover:text-ivorange-700 transition-colors">Mot de passe oublié ?</a>
-              </div>
+              <Label htmlFor="password" className="text-sm font-semibold text-gray-700">Mot de passe</Label>
               <div className="relative">
                 <LockKeyhole className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                 <Input
@@ -130,6 +127,9 @@ export function LoginPage({ seedError }: { seedError?: string }) {
                   required
                   className="pl-11 h-14 rounded-xl border-gray-200 focus:border-ivorange-500 focus:ring-ivorange-500/20 transition-all bg-gray-50/50 hover:bg-white text-base"
                 />
+              </div>
+              <div className="flex justify-end pt-1">
+                <a href="#" className="text-sm font-medium text-ivorange-600 hover:text-ivorange-700 transition-colors">Mot de passe oublié ?</a>
               </div>
             </div>
 
@@ -148,15 +148,6 @@ export function LoginPage({ seedError }: { seedError?: string }) {
               )}
             </Button>
           </form>
-          
-          <div className="mt-10 text-center border-t border-gray-100 pt-8">
-            <div className="flex items-center justify-center gap-2 text-sm text-gray-400">
-              <span className="w-3 h-3 rounded-full bg-ivorange-500"></span>
-              <span className="w-3 h-3 rounded-full bg-gray-200"></span>
-              <span className="w-3 h-3 rounded-full bg-ivgreen-500"></span>
-            </div>
-            <p className="text-[10px] text-gray-400 mt-4 font-bold uppercase tracking-[0.2em]">République de Côte d'Ivoire</p>
-          </div>
         </div>
       </div>
       
