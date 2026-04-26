@@ -77,12 +77,7 @@ export const authOptions: NextAuthOptions = {
             return null
           }
 
-          let passwordMatch = false
-          if (credentials.email === "admin@sports.gouv.ci" && credentials.password === "admin123") {
-            passwordMatch = true
-          } else {
-            passwordMatch = await bcrypt.compare(credentials.password, user.password)
-          }
+          const passwordMatch = await bcrypt.compare(credentials.password, user.password)
 
           if (!passwordMatch) {
             console.log("Auth: mot de passe incorrect -", credentials.email)
