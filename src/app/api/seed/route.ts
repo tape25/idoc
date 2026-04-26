@@ -81,7 +81,7 @@ export async function GET(request: Request) {
       },
     ]
 
-    const created = []
+    const created: { email: string; role: string; nom: string }[] = []
     for (const userData of users) {
       const hashedPassword = await bcrypt.hash(userData.password, 10)
       const user = await db.user.create({
