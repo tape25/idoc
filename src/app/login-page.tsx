@@ -83,7 +83,7 @@ export function LoginPage({ seedError }: { seedError?: string }) {
               src="/illustration-login.png"
               alt="HR Professional Illustration"
               fill
-              className="object-contain drop-shadow-2xl"
+              className="object-contain drop-shadow-2xl mix-blend-multiply"
               priority
             />
           </div>
