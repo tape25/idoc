@@ -14,6 +14,18 @@ import {
   Sparkles
 } from "lucide-react"
 
+import { 
+  PieChart, 
+  Pie, 
+  Cell, 
+  BarChart, 
+  Bar, 
+  XAxis, 
+  YAxis, 
+  Tooltip, 
+  ResponsiveContainer 
+} from "recharts"
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -466,7 +478,7 @@ function HistoriqueTab({ demandes }: { demandes: Demande[] }) {
   )
 }
 
-// Composant Stats Tab (Admin) - Version Premium
+// Composant Stats Tab (Admin) - Version Premium avec Recharts
 function StatsTab({ stats }: { stats: Stats }) {
   const statusLabels: Record<string, string> = {
     soumis: "Soumis",
@@ -484,33 +496,131 @@ function StatsTab({ stats }: { stats: Stats }) {
     certificat: "Certificat"
   }
 
+  // Formatage des données pour Recharts
+  const statusData = stats.parStatut 
+    ? Object.entries(stats.parStatut as Record<string, number>)
+        .filter(([_, value]) => value > 0)
+        .map(([name, value]) => ({
+          name: statusLabels[name] || name,
+          value
+        }))
+    : []
+
+  const actData = stats.parType
+    ? Object.entries(stats.parType as Record<string, number>)
+        .filter(([_, value]) => value > 0)
+        .map(([name, value]) => ({
+          name: typeLabels[name] || name,
+          value
+        }))
+    : []
+
+  // Palette de couleurs inspirée du thème de l'application
+  const COLORS = ['#F77F00', '#009E60', '#3b82f6', '#8b5cf6', '#ef4444', '#f59e0b']
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-      <div className="glass-card rounded-3xl p-8 relative overflow-hidden group">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-2xl group-hover:bg-blue-500/10 transition-colors"></div>
-        <h3 className="font-bold text-xl mb-6 text-gray-900">Répartition par statut</h3>
-        <div className="space-y-4 relative z-10">
-          {stats.parStatut && Object.entries(stats.parStatut as Record<string, number>).map(([key, value]) => (
-            <div key={key} className="flex justify-between items-center p-3 rounded-2xl hover:bg-white/60 transition-colors">
-              <span className="font-medium text-gray-600">{statusLabels[key] || key}</span>
-              <Badge variant="secondary" className="bg-white border-gray-200 text-gray-800 shadow-sm text-sm px-3 py-1">{value}</Badge>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      {/* Donut Chart - Statuts */}
+      <div className="glass-card rounded-3xl p-8 relative overflow-hidden group min-h-[400px] flex flex-col border border-white/60">
+        <div className="absolute top-0 right-0 w-40 h-40 bg-ivorange-500/5 rounded-full blur-3xl group-hover:bg-ivorange-500/10 transition-colors"></div>
+        <h3 className="font-bold text-xl mb-2 text-gray-900 relative z-10">Répartition par Statut</h3>
+        <p className="text-sm text-gray-500 mb-6 relative z-10">Vue globale de l'avancement des dossiers</p>
+        
+        <div className="flex-1 relative z-10 w-full min-h-[250px]">
+          {statusData.length > 0 ? (
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={statusData}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={70}
+                  outerRadius={100}
+                  paddingAngle={5}
+                  dataKey="value"
+                  stroke="none"
+                >
+                  {statusData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip 
+                  contentStyle={{ borderRadius: '1rem', border: '1px solid #f3f4f6', boxShadow: '0 10px 25px -5px rgba(0,0,0,0.05)', fontWeight: 'bold' }}
+                  itemStyle={{ color: '#111827' }}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="flex items-center justify-center h-full text-gray-400 font-medium bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">
+              Aucune donnée de statut disponible
             </div>
-          ))}
+          )}
         </div>
+        
+        {/* Légende personnalisée pour le Donut */}
+        {statusData.length > 0 && (
+          <div className="mt-4 grid grid-cols-2 gap-2 relative z-10">
+            {statusData.map((entry, index) => (
+              <div key={`legend-${index}`} className="flex items-center gap-2 text-sm">
+                <span className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[index % COLORS.length] }}></span>
+                <span className="text-gray-600 truncate">{entry.name}</span>
+                <span className="font-bold text-gray-900 ml-auto">{entry.value}</span>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
-      <div className="glass-card rounded-3xl p-8 relative overflow-hidden group">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-ivorange-500/5 rounded-full blur-2xl group-hover:bg-ivorange-500/10 transition-colors"></div>
-        <h3 className="font-bold text-xl mb-6 text-gray-900">Répartition par acte</h3>
-        <div className="space-y-4 relative z-10">
-          {stats.parType && Object.entries(stats.parType as Record<string, number>).map(([key, value]) => (
-            <div key={key} className="flex justify-between items-center p-3 rounded-2xl hover:bg-white/60 transition-colors">
-              <span className="font-medium text-gray-600">{typeLabels[key] || key}</span>
-              <Badge variant="outline" className="border-ivorange-200 text-ivorange-700 bg-ivorange-50 shadow-sm text-sm px-3 py-1">{value}</Badge>
+      {/* Bar Chart - Actes */}
+      <div className="glass-card rounded-3xl p-8 relative overflow-hidden group min-h-[400px] flex flex-col border border-white/60">
+        <div className="absolute top-0 right-0 w-40 h-40 bg-ivgreen-500/5 rounded-full blur-3xl group-hover:bg-ivgreen-500/10 transition-colors"></div>
+        <h3 className="font-bold text-xl mb-2 text-gray-900 relative z-10">Répartition par Type d'Acte</h3>
+        <p className="text-sm text-gray-500 mb-6 relative z-10">Volume des demandes par catégorie</p>
+        
+        <div className="flex-1 relative z-10 w-full min-h-[250px]">
+          {actData.length > 0 ? (
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={actData} margin={{ top: 10, right: 10, left: -20, bottom: 20 }}>
+                <XAxis 
+                  dataKey="name" 
+                  tick={{ fontSize: 11, fill: '#6b7280' }} 
+                  axisLine={false} 
+                  tickLine={false}
+                  dy={10}
+                />
+                <YAxis 
+                  allowDecimals={false} 
+                  tick={{ fontSize: 12, fill: '#9ca3af' }} 
+                  axisLine={false} 
+                  tickLine={false} 
+                  dx={-10}
+                />
+                <Tooltip 
+                  cursor={{ fill: 'rgba(0, 158, 96, 0.05)' }}
+                  contentStyle={{ borderRadius: '1rem', border: '1px solid #f3f4f6', boxShadow: '0 10px 25px -5px rgba(0,0,0,0.05)' }}
+                  itemStyle={{ color: '#009E60', fontWeight: 'bold' }}
+                />
+                <Bar 
+                  dataKey="value" 
+                  fill="#009E60" 
+                  radius={[6, 6, 0, 0]} 
+                  barSize={32}
+                  animationDuration={1500}
+                >
+                  {actData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={index % 2 === 0 ? '#009E60' : '#F77F00'} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="flex items-center justify-center h-full text-gray-400 font-medium bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">
+              Aucune donnée d'acte disponible
             </div>
-          ))}
+          )}
         </div>
       </div>
     </div>
   )
 }
+
