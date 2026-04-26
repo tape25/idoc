@@ -10,7 +10,8 @@ import {
   Plus,
   Menu,
   X,
-  Clock
+  Clock,
+  Sparkles
 } from "lucide-react"
 
 import { Sidebar } from "./sidebar"
@@ -71,7 +72,6 @@ export function MainDashboard() {
   const [demandes, setDemandes] = useState<Demande[]>([])
   const [loading, setLoading] = useState(true)
   
-  // Nouveaux états de layout
   const [activeTab, setActiveTab] = useState("dashboard")
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   
@@ -130,9 +130,18 @@ export function MainDashboard() {
 
   if (status === "loading" || loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-emerald-50">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-emerald-600 mb-4"></div>
-        <p className="text-emerald-800 font-medium animate-pulse">Chargement de votre espace de travail...</p>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-ivory-50 relative overflow-hidden">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-ivorange-500/10 rounded-full blur-3xl animate-pulse-slow"></div>
+        <div className="relative z-10 flex flex-col items-center">
+          <div className="relative mb-6">
+            <div className="absolute inset-0 bg-gradient-to-tr from-ivorange-500 to-ivgreen-500 rounded-full blur animate-spin opacity-50"></div>
+            <div className="bg-white p-4 rounded-full relative z-10 shadow-xl border border-white/50">
+              <Building2 className="h-10 w-10 text-ivgreen-600" />
+            </div>
+          </div>
+          <h2 className="text-2xl font-bold text-gray-800 tracking-tight">Chargement de l'espace</h2>
+          <p className="text-gray-500 mt-2 font-medium">Veuillez patienter quelques instants...</p>
+        </div>
       </div>
     )
   }
@@ -142,34 +151,42 @@ export function MainDashboard() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
-      {/* Header */}
-      <header className="bg-emerald-700 text-white shadow-lg sticky top-0 z-50">
-        <div className="max-w-full mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            {/* Bouton Menu Mobile */}
+    <div className="min-h-screen flex flex-col bg-gray-50/50 relative">
+      {/* Background Orbs */}
+      <div className="fixed top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-ivorange-500/5 blur-[120px] pointer-events-none" />
+      <div className="fixed bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-ivgreen-500/5 blur-[120px] pointer-events-none" />
+
+      {/* Header Premium */}
+      <header className="glass sticky top-0 z-50 border-b border-gray-200/60 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
+        <div className="max-w-full mx-auto px-4 py-3 sm:px-6 lg:px-8 flex items-center justify-between h-20">
+          <div className="flex items-center gap-4">
             <Button 
               variant="ghost" 
-              className="md:hidden text-white hover:bg-emerald-600 p-1 mr-2"
+              className="md:hidden text-gray-600 hover:text-ivorange-600 hover:bg-ivorange-50 p-2 -ml-2 rounded-xl"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
               {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </Button>
             
-            <Building2 className="h-8 w-8 hidden sm:block" />
+            <div className="hidden sm:flex items-center justify-center bg-gradient-to-br from-ivgreen-500 to-ivgreen-700 p-2.5 rounded-xl shadow-lg shadow-ivgreen-500/20 border border-ivgreen-400/30">
+              <Building2 className="h-6 w-6 text-white" />
+            </div>
             <div>
-              <h1 className="text-sm sm:text-lg font-bold line-clamp-1">DRH - Ministère des Sports</h1>
-              <p className="text-emerald-200 text-xs hidden sm:block">Côte d'Ivoire</p>
+              <h1 className="text-lg sm:text-xl font-extrabold text-gray-900 tracking-tight">DRH <span className="text-ivorange-500">Sports</span></h1>
+              <p className="text-gray-500 text-[10px] sm:text-xs font-semibold uppercase tracking-widest">Côte d'Ivoire</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-4">
+          <div className="flex items-center gap-3 sm:gap-6">
             <NotificationPanel />
             
-            <div className="hidden sm:flex items-center gap-2 bg-emerald-600 rounded-lg px-3 py-2">
-              <div className="text-sm text-right">
-                <p className="font-medium">{user?.prenom} {user?.nom}</p>
-                <p className="text-emerald-200 text-xs">{getRoleName(user?.role || "")}</p>
+            <div className="hidden sm:flex items-center gap-3 pl-6 border-l border-gray-200">
+              <div className="text-right">
+                <p className="font-bold text-gray-900 text-sm">{user?.prenom} {user?.nom}</p>
+                <p className="text-ivorange-600 text-xs font-semibold tracking-wide uppercase">{getRoleName(user?.role || "")}</p>
+              </div>
+              <div className="h-10 w-10 rounded-xl bg-gradient-to-tr from-ivorange-100 to-ivgreen-100 border border-white flex items-center justify-center shadow-inner">
+                <span className="font-bold text-gray-700 text-lg">{user?.prenom?.[0]}{user?.nom?.[0]}</span>
               </div>
             </div>
 
@@ -177,42 +194,49 @@ export function MainDashboard() {
               variant="ghost" 
               size="icon"
               onClick={() => signOut({ callbackUrl: "/" })}
-              className="text-white hover:bg-emerald-600 sm:hidden"
+              className="text-gray-400 hover:text-red-600 hover:bg-red-50 sm:hidden rounded-xl"
             >
               <LogOut className="h-5 w-5" />
             </Button>
             
             <Button 
               variant="ghost" 
-              size="sm"
               onClick={() => signOut({ callbackUrl: "/" })}
-              className="text-white hover:bg-emerald-600 hidden sm:flex"
+              className="hidden sm:flex text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-xl font-medium px-4"
             >
               <LogOut className="h-4 w-4 mr-2" />
-              Déconnexion
+              Quitter
             </Button>
           </div>
         </div>
       </header>
 
-      {/* Main Layout with Sidebar */}
-      <div className="flex flex-1">
+      {/* Main Layout */}
+      <div className="flex flex-1 max-w-[1600px] mx-auto w-full relative z-10">
+        
         {/* Sidebar Desktop */}
-        <Sidebar 
-          activeTab={activeTab} 
-          setActiveTab={(tab) => {
-            setActiveTab(tab)
-            setIsMobileMenuOpen(false)
-          }} 
-          userRole={user?.role || ""} 
-          onLogout={() => signOut({ callbackUrl: "/" })}
-        />
+        <div className="sticky top-20 h-[calc(100vh-80px)]">
+          <Sidebar 
+            activeTab={activeTab} 
+            setActiveTab={(tab) => {
+              setActiveTab(tab)
+              setIsMobileMenuOpen(false)
+            }} 
+            userRole={user?.role || ""} 
+            onLogout={() => signOut({ callbackUrl: "/" })}
+          />
+        </div>
 
         {/* Sidebar Mobile Overlay */}
         {isMobileMenuOpen && (
-          <div className="fixed inset-0 z-40 bg-black/50 md:hidden" onClick={() => setIsMobileMenuOpen(false)}>
-            <div className="fixed inset-y-0 left-0 w-64 bg-white shadow-xl flex flex-col" onClick={e => e.stopPropagation()}>
-              {/* Le contenu est géré en clonant la Sidebar mais visible sur mobile */}
+          <div className="fixed inset-0 z-40 bg-gray-900/40 backdrop-blur-sm md:hidden animate-in fade-in" onClick={() => setIsMobileMenuOpen(false)}>
+            <div className="fixed inset-y-0 left-0 w-72 bg-white shadow-2xl flex flex-col animate-in slide-in-from-left" onClick={e => e.stopPropagation()}>
+              <div className="h-20 flex items-center justify-between px-6 border-b border-gray-100 bg-gray-50/50">
+                <span className="font-bold text-gray-900">Menu</span>
+                <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(false)} className="rounded-full">
+                  <X className="h-5 w-5" />
+                </Button>
+              </div>
               <Sidebar 
                 activeTab={activeTab} 
                 setActiveTab={(tab) => {
@@ -226,98 +250,100 @@ export function MainDashboard() {
           </div>
         )}
 
-        {/* Contenu Principal */}
-        <main className="flex-1 p-4 sm:p-6 w-full max-w-7xl overflow-x-hidden">
-          
-          {/* Dashboard Principal (Stats) */}
-          {activeTab === "dashboard" && (
-            <div className="space-y-6 animate-in fade-in duration-300">
-              <div className="flex justify-between items-center mb-6">
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-800">Vue d'ensemble</h2>
-                  <p className="text-gray-500 text-sm">Bienvenue dans votre espace de travail</p>
+        {/* Content Area */}
+        <main className="flex-1 p-4 sm:p-8 w-full overflow-x-hidden min-h-[calc(100vh-80px)]">
+          <div className="max-w-6xl mx-auto">
+            {/* Dashboard Principal (Stats) */}
+            {activeTab === "dashboard" && (
+              <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-2">
+                  <div>
+                    <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight flex items-center gap-2">
+                      Vue d'ensemble <Sparkles className="h-6 w-6 text-ivorange-500" />
+                    </h2>
+                    <p className="text-gray-500 mt-1 font-medium text-sm sm:text-base">Gérez l'activité RH avec clarté et efficacité.</p>
+                  </div>
+                  {user?.role === "AGENT" && (
+                    <Button 
+                      onClick={() => setShowNewForm(true)} 
+                      className="bg-gradient-to-r from-ivorange-500 to-ivorange-600 hover:from-ivorange-600 hover:to-ivorange-700 text-white rounded-full px-6 shadow-lg shadow-ivorange-500/25 transition-all hover:scale-105 h-12"
+                    >
+                      <Plus className="h-5 w-5 mr-2" />
+                      Nouvelle demande
+                    </Button>
+                  )}
                 </div>
-                {user?.role === "AGENT" && (
-                  <Button 
-                    onClick={() => setShowNewForm(true)} 
-                    className="bg-emerald-600 hover:bg-emerald-700"
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Nouvelle demande
-                  </Button>
+                
+                <StatsCards stats={stats} role={user?.role || ""} />
+                
+                {user?.role === "ADMIN" && (
+                  <div className="mt-12 animate-in fade-in duration-700 delay-150 fill-mode-both">
+                    <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                      Analytique Système
+                      <div className="h-1 flex-1 ml-4 bg-gradient-to-r from-gray-100 to-transparent rounded-full"></div>
+                    </h3>
+                    <StatsTab stats={stats} />
+                  </div>
                 )}
               </div>
-              <StatsCards stats={stats} role={user?.role || ""} />
-              
-              {user?.role === "ADMIN" && (
-                <div className="mt-8">
-                  <h3 className="text-lg font-semibold mb-4 text-gray-700">Analytique avancée</h3>
-                  <StatsTab stats={stats} />
-                </div>
-              )}
-            </div>
-          )}
+            )}
 
-          {/* Onglet Demandes */}
-          {activeTab === "demandes" && (
-            <div className="space-y-4 animate-in fade-in duration-300">
-              <div className="flex justify-between items-center mb-6">
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-800">Gestion des Demandes</h2>
-                  <p className="text-gray-500 text-sm">Consultez et traitez les actes administratifs</p>
+            {/* Autres Onglets... */}
+            {activeTab === "demandes" && (
+              <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-2">
+                  <div>
+                    <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">Dossiers RH</h2>
+                    <p className="text-gray-500 mt-1 font-medium">Traitement et suivi des actes administratifs.</p>
+                  </div>
+                  {user?.role === "AGENT" && (
+                    <Button 
+                      onClick={() => setShowNewForm(true)} 
+                      className="bg-gradient-to-r from-ivorange-500 to-ivorange-600 hover:from-ivorange-600 hover:to-ivorange-700 text-white rounded-full px-6 shadow-lg shadow-ivorange-500/25 h-12 transition-all hover:scale-105"
+                    >
+                      <Plus className="h-5 w-5 sm:mr-2" />
+                      <span className="hidden sm:inline">Nouvelle demande</span>
+                    </Button>
+                  )}
                 </div>
-                {user?.role === "AGENT" && (
-                  <Button 
-                    onClick={() => setShowNewForm(true)} 
-                    className="bg-emerald-600 hover:bg-emerald-700"
-                  >
-                    <Plus className="h-4 w-4 sm:mr-2" />
-                    <span className="hidden sm:inline">Nouvelle demande</span>
-                  </Button>
-                )}
+                <DemandeList 
+                  demandes={demandes}
+                  userRole={user?.role || ""}
+                  onAction={handleAction}
+                  onViewHistorique={(d) => {
+                    setSelectedDemande(d)
+                    setShowHistorique(true)
+                  }}
+                />
               </div>
-              <DemandeList 
-                demandes={demandes}
-                userRole={user?.role || ""}
-                onAction={handleAction}
-                onViewHistorique={(d) => {
-                  setSelectedDemande(d)
-                  setShowHistorique(true)
-                }}
-              />
-            </div>
-          )}
+            )}
 
-          {/* Onglet Historique Global */}
-          {activeTab === "historique" && (
-            <div className="space-y-4 animate-in fade-in duration-300">
-              <h2 className="text-2xl font-bold text-gray-800 mb-6">Historique Global</h2>
-              <HistoriqueTab demandes={demandes} />
-            </div>
-          )}
+            {activeTab === "historique" && (
+              <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight mb-2">Registre des Actions</h2>
+                <HistoriqueTab demandes={demandes} />
+              </div>
+            )}
 
-          {/* Onglet Utilisateurs */}
-          {activeTab === "utilisateurs" && user?.role === "ADMIN" && (
-            <div className="animate-in fade-in duration-300">
-              <UsersManagement />
-            </div>
-          )}
+            {activeTab === "utilisateurs" && user?.role === "ADMIN" && (
+              <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <UsersManagement />
+              </div>
+            )}
 
-          {/* Onglet Paramètres */}
-          {activeTab === "parametres" && (user?.role === "ADMIN" || user?.role === "DRH") && (
-            <div className="animate-in fade-in duration-300">
-              <SettingsPanel />
-            </div>
-          )}
+            {activeTab === "parametres" && (user?.role === "ADMIN" || user?.role === "DRH") && (
+              <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <SettingsPanel />
+              </div>
+            )}
 
-          {/* Onglet Profil */}
-          {activeTab === "profil" && (
-            <div className="animate-in fade-in duration-300">
-              <h2 className="text-2xl font-bold text-gray-800 mb-6">Mon Profil</h2>
-              <ProfilePanel />
-            </div>
-          )}
-
+            {activeTab === "profil" && (
+              <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight mb-2">Espace Personnel</h2>
+                <ProfilePanel />
+              </div>
+            )}
+          </div>
         </main>
       </div>
 
@@ -345,42 +371,50 @@ export function MainDashboard() {
   )
 }
 
-// Composant Historique Tab
+// Composant Historique Tab - Version Premium
 function HistoriqueTab({ demandes }: { demandes: Demande[] }) {
   const statusColors: Record<string, string> = {
-    SOUMIS: "bg-blue-500",
-    EN_VERIFICATION: "bg-yellow-500",
-    REJETE_COURRIER: "bg-red-500",
-    VALIDEE_COURRIER: "bg-green-500",
-    EN_COURS_TRAITEMENT: "bg-orange-500",
-    EN_ATTENTE_SIGNATURE: "bg-purple-500",
-    SIGNE: "bg-emerald-600",
-    RETOUR_SECRETARIAT: "bg-amber-500",
-    TRANSMIS_COURRIER: "bg-teal-500",
-    DISPONIBLE: "bg-green-600",
-    RETIRE: "bg-gray-500"
+    SOUMIS: "bg-blue-500 shadow-blue-500/40",
+    EN_VERIFICATION: "bg-yellow-500 shadow-yellow-500/40",
+    REJETE_COURRIER: "bg-red-500 shadow-red-500/40",
+    VALIDEE_COURRIER: "bg-green-500 shadow-green-500/40",
+    EN_COURS_TRAITEMENT: "bg-ivorange-500 shadow-ivorange-500/40",
+    EN_ATTENTE_SIGNATURE: "bg-purple-500 shadow-purple-500/40",
+    SIGNE: "bg-ivgreen-600 shadow-ivgreen-600/40",
+    RETOUR_SECRETARIAT: "bg-amber-500 shadow-amber-500/40",
+    TRANSMIS_COURRIER: "bg-teal-500 shadow-teal-500/40",
+    DISPONIBLE: "bg-green-600 shadow-green-600/40",
+    RETIRE: "bg-gray-500 shadow-gray-500/40"
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-4 sm:p-6">
-      <div className="space-y-4">
+    <div className="glass-card rounded-3xl p-6 sm:p-8">
+      <div className="space-y-6 relative before:absolute before:inset-0 before:ml-[1.125rem] before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-gray-200 before:to-transparent">
         {demandes.flatMap(d => (d.historique || []).map(h => ({ ...h, demandeRef: d.numeroEnregistrement || "Non enregistré" })))
           .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
           .slice(0, 50)
           .map((h, i) => (
-          <div key={i} className="flex items-start gap-4 p-4 hover:bg-gray-50 transition-colors border-b last:border-0">
-            <div className={`w-3 h-3 mt-1.5 rounded-full shadow-sm flex-shrink-0 ${statusColors[h.nouveauStatut] || "bg-gray-400"}`} />
-            <div className="flex-1 min-w-0">
-              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1">
-                <p className="font-semibold text-gray-900 text-sm">{h.action}</p>
-                <p className="text-xs text-gray-500 font-mono whitespace-nowrap">{new Date(h.createdAt).toLocaleString("fr-FR")}</p>
+          <div key={i} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+            {/* Timeline dot */}
+            <div className={`flex items-center justify-center w-8 h-8 rounded-full border-4 border-white shadow-md shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 ${statusColors[h.nouveauStatut] || "bg-gray-400"}`}>
+            </div>
+            
+            <div className="w-[calc(100%-3rem)] md:w-[calc(50%-2.5rem)] p-5 rounded-2xl bg-white border border-gray-100 shadow-sm group-hover:shadow-md transition-shadow">
+              <div className="flex flex-col gap-1 mb-2">
+                <time className="text-xs font-semibold tracking-wide uppercase text-ivorange-500">{new Date(h.createdAt).toLocaleString("fr-FR")}</time>
+                <h4 className="text-base font-bold text-gray-900">{h.action}</h4>
               </div>
-              <p className="text-xs text-gray-500 mt-1">
-                Demande: <span className="font-mono text-emerald-600">{h.demandeRef}</span> • 
-                Modifié par: <span className="font-medium text-gray-700">{h.user.prenom} {h.user.nom}</span> ({h.user.role})
+              <p className="text-sm text-gray-600 mb-3">
+                Dossier <span className="font-mono text-gray-900 bg-gray-100 px-1 py-0.5 rounded">{h.demandeRef}</span>
               </p>
+              <div className="flex items-center gap-2 text-xs text-gray-500">
+                <div className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center font-bold text-[10px] text-gray-700">
+                  {h.user.prenom[0]}
+                </div>
+                <span>{h.user.prenom} {h.user.nom} ({h.user.role})</span>
+              </div>
               {h.details && (
-                <div className="mt-2 p-2 bg-gray-50 rounded text-xs text-gray-700 border border-gray-100">
+                <div className="mt-4 p-3 bg-gray-50/80 rounded-xl text-sm text-gray-700 border border-gray-100/50">
                   {h.details}
                 </div>
               )}
@@ -388,9 +422,9 @@ function HistoriqueTab({ demandes }: { demandes: Demande[] }) {
           </div>
         ))}
         {demandes.flatMap(d => d.historique || []).length === 0 && (
-          <div className="py-12 flex flex-col items-center justify-center text-gray-500">
-            <Clock className="h-12 w-12 text-gray-300 mb-3" />
-            <p>Aucun historique disponible dans le système.</p>
+          <div className="py-20 flex flex-col items-center justify-center text-gray-400 relative z-10 bg-white/50 rounded-2xl">
+            <Clock className="h-16 w-16 mb-4 text-gray-200" />
+            <p className="font-medium text-lg text-gray-500">Aucune activité enregistrée</p>
           </div>
         )}
       </div>
@@ -398,7 +432,7 @@ function HistoriqueTab({ demandes }: { demandes: Demande[] }) {
   )
 }
 
-// Composant Stats Tab (Admin)
+// Composant Stats Tab (Admin) - Version Premium
 function StatsTab({ stats }: { stats: Stats }) {
   const statusLabels: Record<string, string> = {
     soumis: "Soumis",
@@ -417,26 +451,28 @@ function StatsTab({ stats }: { stats: Stats }) {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
-        <h3 className="font-semibold text-lg mb-4 text-gray-800">Répartition par statut</h3>
-        <div className="space-y-3">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="glass-card rounded-3xl p-8 relative overflow-hidden group">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-2xl group-hover:bg-blue-500/10 transition-colors"></div>
+        <h3 className="font-bold text-xl mb-6 text-gray-900">Répartition par statut</h3>
+        <div className="space-y-4 relative z-10">
           {stats.parStatut && Object.entries(stats.parStatut as Record<string, number>).map(([key, value]) => (
-            <div key={key} className="flex justify-between items-center group">
-              <span className="text-sm text-gray-600 group-hover:text-emerald-700 transition-colors">{statusLabels[key] || key}</span>
-              <Badge variant="secondary" className="bg-gray-100">{value}</Badge>
+            <div key={key} className="flex justify-between items-center p-3 rounded-2xl hover:bg-white/60 transition-colors">
+              <span className="font-medium text-gray-600">{statusLabels[key] || key}</span>
+              <Badge variant="secondary" className="bg-white border-gray-200 text-gray-800 shadow-sm text-sm px-3 py-1">{value}</Badge>
             </div>
           ))}
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
-        <h3 className="font-semibold text-lg mb-4 text-gray-800">Répartition par type</h3>
-        <div className="space-y-3">
+      <div className="glass-card rounded-3xl p-8 relative overflow-hidden group">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-ivorange-500/5 rounded-full blur-2xl group-hover:bg-ivorange-500/10 transition-colors"></div>
+        <h3 className="font-bold text-xl mb-6 text-gray-900">Répartition par acte</h3>
+        <div className="space-y-4 relative z-10">
           {stats.parType && Object.entries(stats.parType as Record<string, number>).map(([key, value]) => (
-            <div key={key} className="flex justify-between items-center group">
-              <span className="text-sm text-gray-600 group-hover:text-emerald-700 transition-colors">{typeLabels[key] || key}</span>
-              <Badge variant="outline" className="text-emerald-700 border-emerald-200">{value}</Badge>
+            <div key={key} className="flex justify-between items-center p-3 rounded-2xl hover:bg-white/60 transition-colors">
+              <span className="font-medium text-gray-600">{typeLabels[key] || key}</span>
+              <Badge variant="outline" className="border-ivorange-200 text-ivorange-700 bg-ivorange-50 shadow-sm text-sm px-3 py-1">{value}</Badge>
             </div>
           ))}
         </div>

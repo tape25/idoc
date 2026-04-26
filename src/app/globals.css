@@ -41,6 +41,40 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --color-ivory-50: #FDFDFC;
+  --color-ivory-100: #F9FAF9;
+  --color-ivory-200: #F3F5F2;
+  --color-ivory: #F8FAFC;
+  --color-ivorange-50: #FFF4EB;
+  --color-ivorange-100: #FFE6D1;
+  --color-ivorange-200: #FFC899;
+  --color-ivorange-300: #FFAA61;
+  --color-ivorange-400: #FF8D2E;
+  --color-ivorange-500: #F77F00;
+  --color-ivorange-600: #D96800;
+  --color-ivorange-700: #A64D00;
+  --color-ivorange-800: #7A3A00;
+  --color-ivorange-900: #472100;
+  --color-ivorange: #F77F00;
+  --color-ivgreen-50: #E6F6ED;
+  --color-ivgreen-100: #C1E8D2;
+  --color-ivgreen-200: #9CDAB7;
+  --color-ivgreen-300: #77CC9C;
+  --color-ivgreen-400: #52BE81;
+  --color-ivgreen-500: #009E60;
+  --color-ivgreen-600: #00844F;
+  --color-ivgreen-700: #00653D;
+  --color-ivgreen-800: #004A2C;
+  --color-ivgreen-900: #002B19;
+  --color-ivgreen: #009E60;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-float-delayed: float 6s ease-in-out 3s infinite;
+  --animate-pulse-slow: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
 }
 
 :root {
@@ -118,5 +152,36 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-white/70 backdrop-blur-md border border-white/40 shadow-[0_8px_32px_0_rgba(0,0,0,0.05)];
+  }
+  .glass-dark {
+    @apply bg-black/40 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)];
+  }
+  .glass-card {
+    @apply bg-white/80 backdrop-blur-lg border border-white/50 shadow-sm hover:shadow-md transition-all duration-300;
+  }
+  .glass-ivgreen {
+    @apply bg-ivgreen-900/80 backdrop-blur-xl border border-ivgreen-700/50 shadow-2xl;
+  }
+  
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-ivorange-500 to-ivgreen-500;
+  }
+  .bg-gradient-ivoire {
+    @apply bg-gradient-to-br from-ivory-50 via-white to-ivgreen-50;
+  }
+  
+  /* Masquer la scrollbar tout en gardant le scroll */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }
