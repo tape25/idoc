@@ -2,7 +2,15 @@
 
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Building2, ShieldCheck, FileText, ArrowRight, Zap, Globe, CheckCircle2, Clock, Users } from "lucide-react"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Building2, ShieldCheck, FileText, ArrowRight, Zap, Globe, CheckCircle2, Clock, Users, LockKeyhole, Bell, CheckSquare } from "lucide-react"
 
 export function LandingPage({ onLoginClick }: { onLoginClick: () => void }) {
   const marqueeItems = [
@@ -70,9 +78,68 @@ export function LandingPage({ onLoginClick }: { onLoginClick: () => void }) {
                   Accéder à mon espace
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
-                <Button size="lg" variant="outline" className="w-full sm:w-auto rounded-full px-8 h-14 text-lg font-semibold border-gray-200 text-gray-700 hover:bg-white hover:border-ivgreen-200 hover:text-ivgreen-700 glass transition-all">
-                  Guide d'utilisation
-                </Button>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button size="lg" variant="outline" className="w-full sm:w-auto rounded-full px-8 h-14 text-lg font-semibold border-gray-200 text-gray-700 hover:bg-white hover:border-ivgreen-200 hover:text-ivgreen-700 glass transition-all">
+                      Guide d'utilisation
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[600px] bg-white border-ivgreen-100 shadow-2xl p-6 sm:p-8 rounded-[2rem]">
+                    <DialogHeader>
+                      <DialogTitle className="text-2xl font-bold text-gray-900 flex items-center gap-3">
+                        <div className="bg-ivorange-100 p-2 rounded-xl">
+                          <FileText className="h-6 w-6 text-ivorange-600" />
+                        </div>
+                        Guide d'utilisation rapide
+                      </DialogTitle>
+                      <DialogDescription className="text-gray-500 mt-2 text-base">
+                        Découvrez comment naviguer et utiliser le portail DRH Sports en 4 étapes simples.
+                      </DialogDescription>
+                    </DialogHeader>
+                    
+                    <div className="space-y-8 py-6">
+                      <div className="flex gap-4">
+                        <div className="bg-gray-50 p-3 rounded-full h-fit border border-gray-100">
+                          <LockKeyhole className="h-5 w-5 text-gray-700" />
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-gray-900 mb-1">1. Connexion Sécurisée</h4>
+                          <p className="text-sm text-gray-600 leading-relaxed">Utilisez votre adresse email professionnelle <span className="font-semibold">(ex: agent@sports.gouv.ci)</span> et votre mot de passe pour accéder à votre espace personnel de manière totalement sécurisée.</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex gap-4">
+                        <div className="bg-ivgreen-50 p-3 rounded-full h-fit border border-ivgreen-100">
+                          <FileText className="h-5 w-5 text-ivgreen-600" />
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-gray-900 mb-1">2. Soumission d'une Demande</h4>
+                          <p className="text-sm text-gray-600 leading-relaxed">Depuis votre tableau de bord, cliquez sur <span className="font-semibold text-ivgreen-700">"Nouvelle Demande"</span>. Remplissez le formulaire numérique et joignez les pièces justificatives requises. C'est 100% sans papier.</p>
+                        </div>
+                      </div>
+
+                      <div className="flex gap-4">
+                        <div className="bg-ivorange-50 p-3 rounded-full h-fit border border-ivorange-100">
+                          <Bell className="h-5 w-5 text-ivorange-600" />
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-gray-900 mb-1">3. Suivi et Notifications</h4>
+                          <p className="text-sm text-gray-600 leading-relaxed">Suivez l'avancement de votre dossier en temps réel. Vous recevrez des alertes à chaque étape de validation par la hiérarchie.</p>
+                        </div>
+                      </div>
+
+                      <div className="flex gap-4">
+                        <div className="bg-blue-50 p-3 rounded-full h-fit border border-blue-100">
+                          <CheckSquare className="h-5 w-5 text-blue-600" />
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-gray-900 mb-1">4. Décision Finale</h4>
+                          <p className="text-sm text-gray-600 leading-relaxed">Une fois votre demande approuvée, vous pourrez télécharger directement vos actes administratifs (attestations, décisions) depuis la plateforme.</p>
+                        </div>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
               </div>
             </div>
 
