@@ -150,12 +150,6 @@ export function LoginPage({ seedError }: { seedError?: string }) {
           </form>
         </div>
       </div>
-      
-      {/* Bottom Security Badge */}
-      <div className="absolute bottom-6 z-10 glass px-4 py-2 rounded-full border border-gray-200/50 text-xs font-medium text-gray-500 flex items-center gap-2">
-        <LockKeyhole className="h-3 w-3 text-ivgreen-600" />
-        Accès restreint au personnel autorisé
-      </div>
     </div>
   )
 }
