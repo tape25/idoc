@@ -84,16 +84,16 @@ export function LandingPage({ onLoginClick }: { onLoginClick: () => void }) {
                       Guide d'utilisation
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="sm:max-w-[600px] bg-white border-ivgreen-100 shadow-2xl p-6 sm:p-8 rounded-[2rem]">
-                    <DialogHeader>
-                      <DialogTitle className="text-2xl font-bold text-gray-900 flex items-center gap-3">
-                        <div className="bg-ivorange-100 p-2 rounded-xl">
-                          <FileText className="h-6 w-6 text-ivorange-600" />
+                  <DialogContent className="sm:max-w-[600px] w-[95vw] max-h-[85vh] overflow-y-auto bg-white border-ivgreen-100 shadow-2xl p-6 sm:p-8 rounded-[2rem] custom-scrollbar">
+                    <DialogHeader className="sticky top-0 bg-white/95 backdrop-blur-sm z-10 pb-4 border-b border-gray-100/50 mb-2">
+                      <DialogTitle className="text-xl sm:text-2xl font-bold text-gray-900 flex items-center gap-3">
+                        <div className="bg-ivorange-100 p-2 rounded-xl shrink-0">
+                          <FileText className="h-5 w-5 sm:h-6 sm:w-6 text-ivorange-600" />
                         </div>
-                        Guide d'utilisation rapide
+                        Guide d'utilisation
                       </DialogTitle>
-                      <DialogDescription className="text-gray-500 mt-2 text-base">
-                        Découvrez comment naviguer et utiliser le portail DRH Sports en 4 étapes simples.
+                      <DialogDescription className="text-gray-500 mt-2 text-sm sm:text-base">
+                        Naviguez et utilisez le portail DRH Sports en 4 étapes simples.
                       </DialogDescription>
                     </DialogHeader>
                     
