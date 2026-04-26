@@ -53,6 +53,17 @@ export function LandingPage({ onLoginClick }: { onLoginClick: () => void }) {
         </div>
       </header>
 
+      {/* Infinite Marquee Section - News Ticker Style */}
+      <div className="bg-ivgreen-900/95 backdrop-blur-md border-b border-ivgreen-800 overflow-hidden relative py-2 z-40">
+        <div className="flex w-fit animate-marquee">
+          {[...marqueeItems, ...marqueeItems, ...marqueeItems].map((item, index) => (
+            <div key={index} className="flex items-center px-6 text-ivgreen-50 whitespace-nowrap font-medium text-xs tracking-wider uppercase">
+              <span className={item.includes("✦") ? "text-ivorange-400 mr-1" : ""}>{item}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
       <main className="flex-1">
         {/* Asymmetrical Hero Section */}
         <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 lg:pt-32 pb-20">
@@ -198,18 +209,7 @@ export function LandingPage({ onLoginClick }: { onLoginClick: () => void }) {
           </div>
         </section>
 
-        {/* Infinite Marquee Section */}
-        <section className="py-6 bg-gray-900 border-y border-gray-800 overflow-hidden relative">
-          <div className="absolute inset-0 bg-gradient-to-r from-ivorange-500/10 to-ivgreen-500/10 pointer-events-none"></div>
-          <div className="flex w-fit animate-marquee">
-            {/* Double the array for seamless infinite scroll */}
-            {[...marqueeItems, ...marqueeItems, ...marqueeItems].map((item, index) => (
-              <div key={index} className="flex items-center px-8 text-ivgreen-100 whitespace-nowrap font-semibold text-lg tracking-wide">
-                <span className={item.includes("✦") ? "text-ivorange-400" : ""}>{item}</span>
-              </div>
-            ))}
-          </div>
-        </section>
+
 
         {/* Smart Bento Grid Features */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
