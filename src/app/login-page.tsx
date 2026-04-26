@@ -3,12 +3,22 @@
 import { useState } from "react"
 import { signIn } from "next-auth/react"
 import { useRouter } from "next/navigation"
-import Image from "next/image"
+import dynamic from "next/dynamic"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { AlertCircle, Loader2, Building2, LockKeyhole, Mail, ArrowRight } from "lucide-react"
+
+const Spline = dynamic(() => import('@splinetool/react-spline'), {
+  ssr: false,
+  loading: () => (
+    <div className="absolute inset-0 flex flex-col items-center justify-center">
+      <Loader2 className="h-10 w-10 animate-spin text-ivorange-500 mb-4" />
+      <p className="text-sm text-gray-500 font-medium">Chargement du modèle 3D...</p>
+    </div>
+  )
+})
 
 export function LoginPage({ seedError }: { seedError?: string }) {
   const [email, setEmail] = useState("")
@@ -77,16 +87,8 @@ export function LoginPage({ seedError }: { seedError?: string }) {
         </div>
 
         {/* Main Illustration Container */}
-        <div className="relative z-10 mt-16 w-full max-w-lg animate-in fade-in zoom-in-95 duration-1000">
-          <div className="relative aspect-square w-full">
-            <Image
-              src="/illustration-login.png"
-              alt="HR Professional Illustration"
-              fill
-              className="object-contain drop-shadow-2xl mix-blend-multiply"
-              priority
-            />
-          </div>
+        <div className="relative z-10 mt-16 w-[120%] h-[600px] animate-in fade-in zoom-in-95 duration-1000 -ml-[10%]">
+          <Spline scene="https://prod.spline.design/iOtwB-iA2hZqB32z/scene.splinecode" />
         </div>
 
         {/* Decorative elements */}
