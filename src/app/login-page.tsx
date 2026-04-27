@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { AlertCircle, Loader2, Building2, LockKeyhole, Mail, ArrowRight } from "lucide-react"
+import Image from "next/image"
+import { AlertCircle, Loader2, LockKeyhole, Mail, ArrowRight } from "lucide-react"
 
 export function LoginPage({ seedError }: { seedError?: string }) {
   const [email, setEmail] = useState("")
@@ -67,8 +68,8 @@ export function LoginPage({ seedError }: { seedError?: string }) {
         
         {/* Header */}
         <div className="flex flex-col items-center gap-4 mb-10">
-          <div className="bg-gradient-to-br from-ivgreen-500 to-ivgreen-700 p-4 rounded-2xl shadow-lg shadow-ivgreen-500/20">
-            <Building2 className="h-8 w-8 text-white" />
+          <div className="bg-gradient-to-br from-ivgreen-500 to-ivgreen-700 p-2 rounded-2xl shadow-lg shadow-ivgreen-500/20">
+            <Image src="/images/logo-dsi-header.png" alt="Logo DSI" width={48} height={48} className="rounded-xl" />
           </div>
           <div className="text-center">
             <h1 className="text-2xl font-extrabold tracking-tight text-gray-900">DRH <span className="text-ivorange-500">Sports</span></h1>

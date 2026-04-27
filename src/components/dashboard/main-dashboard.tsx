@@ -4,8 +4,8 @@ import { useEffect, useState } from "react"
 import { useSession, signOut } from "next-auth/react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import Image from "next/image"
 import { 
-  Building2, 
   LogOut,
   Plus,
   Menu,
@@ -159,8 +159,8 @@ export function MainDashboard() {
         <div className="relative z-10 flex flex-col items-center">
           <div className="relative mb-6">
             <div className="absolute inset-0 bg-gradient-to-tr from-ivorange-500 to-ivgreen-500 rounded-full blur animate-spin opacity-50"></div>
-            <div className="bg-white p-4 rounded-full relative z-10 shadow-xl border border-white/50">
-              <Building2 className="h-10 w-10 text-ivgreen-600" />
+            <div className="bg-white p-3 rounded-full relative z-10 shadow-xl border border-white/50">
+              <Image src="/images/logo-dsi-header.png" alt="Logo DSI" width={48} height={48} className="rounded-lg" />
             </div>
           </div>
           <h2 className="text-2xl font-bold text-gray-800 tracking-tight">Chargement de l'espace</h2>
@@ -192,8 +192,8 @@ export function MainDashboard() {
               {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </Button>
             
-            <div className="hidden sm:flex items-center justify-center bg-gradient-to-br from-ivgreen-500 to-ivgreen-700 p-2.5 rounded-xl shadow-lg shadow-ivgreen-500/20 border border-ivgreen-400/30">
-              <Building2 className="h-6 w-6 text-white" />
+            <div className="hidden sm:flex items-center justify-center bg-gradient-to-br from-ivgreen-500 to-ivgreen-700 p-1.5 rounded-xl shadow-lg shadow-ivgreen-500/20 border border-ivgreen-400/30">
+              <Image src="/images/logo-dsi-header.png" alt="Logo DSI" width={36} height={36} className="rounded-md" />
             </div>
             <div>
               <h1 className="text-lg sm:text-xl font-extrabold text-gray-900 tracking-tight">DRH <span className="text-ivorange-500">Sports</span></h1>

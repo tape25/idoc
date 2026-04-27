@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import Image from "next/image"
 import {
   Dialog,
   DialogContent,
@@ -10,7 +11,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { Building2, ShieldCheck, FileText, ArrowRight, Zap, Globe, CheckCircle2, Clock, Users, LockKeyhole, Bell, CheckSquare } from "lucide-react"
+import { ShieldCheck, FileText, ArrowRight, Zap, Globe, CheckCircle2, Clock, Users, LockKeyhole, Bell, CheckSquare } from "lucide-react"
 
 export function LandingPage({ onLoginClick }: { onLoginClick: () => void }) {
   const marqueeItems = [
@@ -33,8 +34,8 @@ export function LandingPage({ onLoginClick }: { onLoginClick: () => void }) {
       <header className="glass sticky top-0 z-50 w-full border-b border-white/40 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="bg-gradient-to-br from-ivgreen-500 to-ivgreen-700 p-2.5 rounded-xl shadow-lg shadow-ivgreen-500/30">
-              <Building2 className="h-6 w-6 text-white" />
+            <div className="bg-gradient-to-br from-ivgreen-500 to-ivgreen-700 p-1.5 rounded-xl shadow-lg shadow-ivgreen-500/30">
+              <Image src="/images/logo-dsi-header.png" alt="Logo DSI" width={36} height={36} className="rounded-md" />
             </div>
             <div>
               <h1 className="text-xl font-bold text-gray-900 tracking-tight">DRH <span className="text-ivorange-500">Sports</span></h1>
@@ -302,8 +303,8 @@ export function LandingPage({ onLoginClick }: { onLoginClick: () => void }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-8">
             <div className="flex items-center gap-3">
-              <div className="bg-white/10 p-2 rounded-lg">
-                <Building2 className="h-6 w-6 text-ivgreen-400" />
+              <div className="bg-white/10 p-1.5 rounded-lg">
+                <Image src="/images/logo-dsi-header.png" alt="Logo DSI" width={36} height={36} className="rounded-md" />
               </div>
               <div>
                 <h2 className="text-lg font-bold tracking-tight">DRH Sports</h2>
