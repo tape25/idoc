@@ -35,12 +35,12 @@ export function LandingPage({ onLoginClick }: { onLoginClick: () => void }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
           {/* Logo - Left side */}
           <div className="flex items-center gap-2.5">
-            <div className="bg-gradient-to-br from-ivgreen-500 to-ivgreen-700 p-1.5 rounded-xl shadow-lg shadow-ivgreen-500/30">
+            <div className="bg-white p-1.5 rounded-xl shadow-md border border-gray-100">
               <Image src="/images/logo-dsi-header.png" alt="Logo DSI" width={36} height={36} className="rounded-md" />
             </div>
             <div className="hidden sm:block">
-              <h1 className="text-base sm:text-lg font-bold text-gray-900 tracking-tight leading-tight">DRH <span className="text-ivorange-500">Sports</span></h1>
-              <p className="text-[9px] sm:text-[10px] font-bold text-gray-400 uppercase tracking-[0.15em]">Direction des Ressources Humaines</p>
+              <h1 className="text-base sm:text-lg font-bold text-gray-900 tracking-tight leading-tight"><span className="text-ivorange-500">DSI</span></h1>
+              <p className="text-[9px] sm:text-[10px] font-bold text-gray-400 uppercase tracking-[0.15em]">Direction des Systèmes de l'Information</p>
             </div>
           </div>
           {/* Right side: Login icon + Ministry Logo at extreme right */}
@@ -324,7 +324,7 @@ export function LandingPage({ onLoginClick }: { onLoginClick: () => void }) {
                 </div>
               </div>
               <div>
-                <h2 className="text-lg font-bold tracking-tight">DRH Sports</h2>
+                <h2 className="text-lg font-bold tracking-tight">DSI</h2>
                 <p className="text-xs text-gray-400 uppercase tracking-widest">Côte d'Ivoire</p>
               </div>
             </div>
