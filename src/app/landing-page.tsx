@@ -11,7 +11,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { ShieldCheck, FileText, ArrowRight, Zap, Globe, CheckCircle2, Clock, Users, LockKeyhole, Bell, CheckSquare } from "lucide-react"
+import { ShieldCheck, FileText, ArrowRight, Zap, Globe, CheckCircle2, Clock, Users, LockKeyhole, Bell, CheckSquare, LogIn } from "lucide-react"
 
 export function LandingPage({ onLoginClick }: { onLoginClick: () => void }) {
   const marqueeItems = [
@@ -33,20 +33,22 @@ export function LandingPage({ onLoginClick }: { onLoginClick: () => void }) {
       {/* Header */}
       <header className="glass sticky top-0 z-50 w-full border-b border-white/40 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-          {/* Logos group - Left side */}
-          <div className="flex items-center gap-2 sm:gap-4">
-            <div className="flex items-center gap-2.5">
-              <div className="bg-gradient-to-br from-ivgreen-500 to-ivgreen-700 p-1.5 rounded-xl shadow-lg shadow-ivgreen-500/30">
-                <Image src="/images/logo-dsi-header.png" alt="Logo DSI" width={36} height={36} className="rounded-md" />
-              </div>
-              <div className="hidden sm:block">
-                <h1 className="text-base sm:text-lg font-bold text-gray-900 tracking-tight leading-tight">DRH <span className="text-ivorange-500">Sports</span></h1>
-                <p className="text-[9px] sm:text-[10px] font-bold text-gray-400 uppercase tracking-[0.15em]">Direction des Ressources Humaines</p>
-              </div>
+          {/* Logo - Left side */}
+          <div className="flex items-center gap-2.5">
+            <div className="bg-gradient-to-br from-ivgreen-500 to-ivgreen-700 p-1.5 rounded-xl shadow-lg shadow-ivgreen-500/30">
+              <Image src="/images/logo-dsi-header.png" alt="Logo DSI" width={36} height={36} className="rounded-md" />
             </div>
-            {/* Separator */}
-            <div className="hidden sm:block h-10 w-px bg-gradient-to-b from-transparent via-gray-200 to-transparent"></div>
-            {/* Ministry Logo */}
+            <div className="hidden sm:block">
+              <h1 className="text-base sm:text-lg font-bold text-gray-900 tracking-tight leading-tight">DRH <span className="text-ivorange-500">Sports</span></h1>
+              <p className="text-[9px] sm:text-[10px] font-bold text-gray-400 uppercase tracking-[0.15em]">Direction des Ressources Humaines</p>
+            </div>
+          </div>
+          {/* Right side: Login icon + Ministry Logo at extreme right */}
+          <div className="flex items-center gap-3 sm:gap-4">
+            <Button onClick={onLoginClick} variant="ghost" size="icon" className="h-9 w-9 rounded-full text-gray-600 hover:text-ivorange-600 hover:bg-ivorange-50 transition-all" title="Se connecter">
+              <LogIn className="h-5 w-5" />
+            </Button>
+            {/* Ministry Logo - Extreme Right */}
             <div className="flex items-center gap-2.5">
               <div className="bg-white p-1.5 rounded-xl shadow-md border border-gray-100">
                 <Image src="/images/logo-ministere-sports.png" alt="Ministère des Sports" width={36} height={36} className="rounded-md" />
@@ -56,16 +58,6 @@ export function LandingPage({ onLoginClick }: { onLoginClick: () => void }) {
                 <p className="text-[9px] sm:text-[10px] font-bold text-ivgreen-600 uppercase tracking-[0.15em]">Ministère des Sports</p>
               </div>
             </div>
-          </div>
-          {/* Buttons - Right side */}
-          <div className="flex items-center gap-2 sm:gap-4">
-            <Button variant="ghost" onClick={onLoginClick} className="hidden sm:flex text-gray-600 hover:text-ivorange-600 hover:bg-ivorange-50 rounded-full px-4 sm:px-6 font-semibold text-sm">
-              Espace Agent
-            </Button>
-            <Button onClick={onLoginClick} className="bg-gray-900 hover:bg-gray-800 text-white rounded-full px-4 sm:px-6 shadow-lg shadow-gray-900/20 transition-all hover:-translate-y-0.5 text-sm">
-              Se connecter
-              <ArrowRight className="ml-1.5 h-4 w-4" />
-            </Button>
           </div>
         </div>
       </header>
