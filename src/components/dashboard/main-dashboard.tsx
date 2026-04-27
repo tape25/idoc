@@ -192,12 +192,22 @@ export function MainDashboard() {
               {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </Button>
             
-            <div className="hidden sm:flex items-center justify-center bg-gradient-to-br from-ivgreen-500 to-ivgreen-700 p-1.5 rounded-xl shadow-lg shadow-ivgreen-500/20 border border-ivgreen-400/30">
-              <Image src="/images/logo-dsi-header.png" alt="Logo DSI" width={36} height={36} className="rounded-md" />
-            </div>
-            <div>
-              <h1 className="text-lg sm:text-xl font-extrabold text-gray-900 tracking-tight">DRH <span className="text-ivorange-500">Sports</span></h1>
-              <p className="text-gray-500 text-[10px] sm:text-xs font-semibold uppercase tracking-widest">Côte d'Ivoire</p>
+            <div className="flex items-center gap-2 lg:gap-4">
+              <div className="hidden sm:flex items-center justify-center bg-gradient-to-br from-ivgreen-500 to-ivgreen-700 p-1.5 rounded-xl shadow-lg shadow-ivgreen-500/20 border border-ivgreen-400/30">
+                <Image src="/images/logo-dsi-header.png" alt="Logo DSI" width={32} height={32} className="rounded-md" />
+              </div>
+              <div className="hidden sm:block">
+                <h1 className="text-sm lg:text-base font-extrabold text-gray-900 tracking-tight">DRH <span className="text-ivorange-500">Sports</span></h1>
+                <p className="text-gray-400 text-[9px] font-semibold uppercase tracking-[0.12em]">Direction des Ressources Humaines</p>
+              </div>
+              <div className="hidden md:block h-8 w-px bg-gradient-to-b from-transparent via-gray-200 to-transparent"></div>
+              <div className="hidden md:flex items-center justify-center bg-white p-1.5 rounded-xl shadow-md border border-gray-100">
+                <Image src="/images/logo-ministere-sports.png" alt="Ministère des Sports" width={32} height={32} className="rounded-md" />
+              </div>
+              <div className="hidden lg:block">
+                <p className="text-xs font-bold text-gray-900 tracking-tight leading-tight">Ministère des Sports</p>
+                <p className="text-[9px] font-bold text-ivgreen-600 uppercase tracking-[0.12em]">Côte d'Ivoire</p>
+              </div>
             </div>
           </div>
 

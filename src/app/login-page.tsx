@@ -68,12 +68,18 @@ export function LoginPage({ seedError }: { seedError?: string }) {
         
         {/* Header */}
         <div className="flex flex-col items-center gap-4 mb-10">
-          <div className="bg-gradient-to-br from-ivgreen-500 to-ivgreen-700 p-2 rounded-2xl shadow-lg shadow-ivgreen-500/20">
-            <Image src="/images/logo-dsi-header.png" alt="Logo DSI" width={48} height={48} className="rounded-xl" />
+          <div className="flex items-center gap-3">
+            <div className="bg-gradient-to-br from-ivgreen-500 to-ivgreen-700 p-2 rounded-2xl shadow-lg shadow-ivgreen-500/20">
+              <Image src="/images/logo-dsi-header.png" alt="Logo DSI" width={44} height={44} className="rounded-xl" />
+            </div>
+            <div className="h-12 w-px bg-gradient-to-b from-transparent via-gray-200 to-transparent"></div>
+            <div className="bg-white p-2 rounded-2xl shadow-md border border-gray-100">
+              <Image src="/images/logo-ministere-sports.png" alt="Ministère des Sports" width={44} height={44} className="rounded-xl" />
+            </div>
           </div>
           <div className="text-center">
             <h1 className="text-2xl font-extrabold tracking-tight text-gray-900">DRH <span className="text-ivorange-500">Sports</span></h1>
-            <p className="text-xs text-gray-500 uppercase tracking-widest font-semibold mt-1">Côte d'Ivoire</p>
+            <p className="text-xs text-gray-500 uppercase tracking-widest font-semibold mt-1">Ministère des Sports — Côte d'Ivoire</p>
           </div>
         </div>
 

@@ -33,22 +33,38 @@ export function LandingPage({ onLoginClick }: { onLoginClick: () => void }) {
       {/* Header */}
       <header className="glass sticky top-0 z-50 w-full border-b border-white/40 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="bg-gradient-to-br from-ivgreen-500 to-ivgreen-700 p-1.5 rounded-xl shadow-lg shadow-ivgreen-500/30">
-              <Image src="/images/logo-dsi-header.png" alt="Logo DSI" width={36} height={36} className="rounded-md" />
+          {/* Logos group - Left side */}
+          <div className="flex items-center gap-2 sm:gap-4">
+            <div className="flex items-center gap-2.5">
+              <div className="bg-gradient-to-br from-ivgreen-500 to-ivgreen-700 p-1.5 rounded-xl shadow-lg shadow-ivgreen-500/30">
+                <Image src="/images/logo-dsi-header.png" alt="Logo DSI" width={36} height={36} className="rounded-md" />
+              </div>
+              <div className="hidden sm:block">
+                <h1 className="text-base sm:text-lg font-bold text-gray-900 tracking-tight leading-tight">DRH <span className="text-ivorange-500">Sports</span></h1>
+                <p className="text-[9px] sm:text-[10px] font-bold text-gray-400 uppercase tracking-[0.15em]">Direction des Ressources Humaines</p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900 tracking-tight">DRH <span className="text-ivorange-500">Sports</span></h1>
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">Côte d'Ivoire</p>
+            {/* Separator */}
+            <div className="hidden sm:block h-10 w-px bg-gradient-to-b from-transparent via-gray-200 to-transparent"></div>
+            {/* Ministry Logo */}
+            <div className="flex items-center gap-2.5">
+              <div className="bg-white p-1.5 rounded-xl shadow-md border border-gray-100">
+                <Image src="/images/logo-ministere-sports.png" alt="Ministère des Sports" width={36} height={36} className="rounded-md" />
+              </div>
+              <div className="hidden md:block">
+                <h2 className="text-base font-bold text-gray-900 tracking-tight leading-tight">République de Côte d'Ivoire</h2>
+                <p className="text-[9px] sm:text-[10px] font-bold text-ivgreen-600 uppercase tracking-[0.15em]">Ministère des Sports</p>
+              </div>
             </div>
           </div>
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" onClick={onLoginClick} className="hidden sm:flex text-gray-600 hover:text-ivorange-600 hover:bg-ivorange-50 rounded-full px-6 font-semibold">
+          {/* Buttons - Right side */}
+          <div className="flex items-center gap-2 sm:gap-4">
+            <Button variant="ghost" onClick={onLoginClick} className="hidden sm:flex text-gray-600 hover:text-ivorange-600 hover:bg-ivorange-50 rounded-full px-4 sm:px-6 font-semibold text-sm">
               Espace Agent
             </Button>
-            <Button onClick={onLoginClick} className="bg-gray-900 hover:bg-gray-800 text-white rounded-full px-6 shadow-lg shadow-gray-900/20 transition-all hover:-translate-y-0.5">
+            <Button onClick={onLoginClick} className="bg-gray-900 hover:bg-gray-800 text-white rounded-full px-4 sm:px-6 shadow-lg shadow-gray-900/20 transition-all hover:-translate-y-0.5 text-sm">
               Se connecter
-              <ArrowRight className="ml-2 h-4 w-4" />
+              <ArrowRight className="ml-1.5 h-4 w-4" />
             </Button>
           </div>
         </div>
@@ -303,8 +319,13 @@ export function LandingPage({ onLoginClick }: { onLoginClick: () => void }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-8">
             <div className="flex items-center gap-3">
-              <div className="bg-white/10 p-1.5 rounded-lg">
-                <Image src="/images/logo-dsi-header.png" alt="Logo DSI" width={36} height={36} className="rounded-md" />
+              <div className="flex items-center gap-2">
+                <div className="bg-white/10 p-1.5 rounded-lg">
+                  <Image src="/images/logo-dsi-header.png" alt="Logo DSI" width={32} height={32} className="rounded-md" />
+                </div>
+                <div className="bg-white/10 p-1.5 rounded-lg">
+                  <Image src="/images/logo-ministere-sports.png" alt="Ministère des Sports" width={32} height={32} className="rounded-md" />
+                </div>
               </div>
               <div>
                 <h2 className="text-lg font-bold tracking-tight">DRH Sports</h2>
