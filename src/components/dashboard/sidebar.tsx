@@ -31,45 +31,40 @@ export function Sidebar({ activeTab, setActiveTab, userRole, onLogout }: Sidebar
   const visibleTabs = tabs.filter(tab => tab.roles.includes(userRole))
 
   return (
-    <aside className="w-64 bg-white/60 backdrop-blur-xl border-r border-gray-100 min-h-[calc(100vh-72px)] flex flex-col hidden md:flex relative">
-      <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-b from-ivory-50 to-transparent opacity-50 pointer-events-none"></div>
-      
-      <div className="p-4 space-y-2 flex-1 relative z-10 mt-4">
+    <aside className="w-64 bg-white/80 backdrop-blur-sm border-r border-gray-100 min-h-[calc(100vh-80px)] flex flex-col hidden md:flex">
+      <div className="p-3 space-y-1 flex-1 mt-2">
         {visibleTabs.map((tab) => {
           const isActive = activeTab === tab.id
           return (
             <Button
               key={tab.id}
               variant="ghost"
-              className={`w-full justify-start h-12 rounded-xl transition-all duration-300 relative group overflow-hidden ${
+              className={`w-full justify-start h-11 rounded-xl transition-all duration-200 ${
                 isActive 
-                  ? "bg-white shadow-[0_4px_20px_-4px_rgba(247,127,0,0.15)] text-ivorange-600 border border-ivorange-100" 
-                  : "text-gray-500 hover:text-gray-900 hover:bg-white/80"
+                  ? "bg-ivorange-50 text-ivorange-600 hover:bg-ivorange-100" 
+                  : "text-gray-500 hover:text-gray-900 hover:bg-gray-50"
               }`}
               onClick={() => setActiveTab(tab.id)}
             >
-              {isActive && (
-                <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-ivorange-400 to-ivorange-600 rounded-r-md"></div>
-              )}
-              <div className={`mr-3 p-2 rounded-lg transition-colors ${isActive ? 'bg-ivorange-50 text-ivorange-500' : 'bg-gray-50 text-gray-400 group-hover:text-ivorange-400 group-hover:bg-ivorange-50/50'}`}>
-                <tab.icon className="h-5 w-5" strokeWidth={isActive ? 2.5 : 2} />
+              <div className={`mr-3 p-1.5 rounded-lg ${isActive ? 'bg-ivorange-100 text-ivorange-500' : 'text-gray-400'}`}>
+                <tab.icon className="h-4 w-4" strokeWidth={isActive ? 2.5 : 2} />
               </div>
-              <span className={`font-medium ${isActive ? 'font-semibold tracking-wide' : ''}`}>{tab.label}</span>
+              <span className={`text-sm ${isActive ? 'font-semibold' : 'font-medium'}`}>{tab.label}</span>
             </Button>
           )
         })}
       </div>
 
-      <div className="p-4 border-t border-gray-100/50 relative z-10 bg-white/40">
+      <div className="p-3 border-t border-gray-100">
         <Button
           variant="ghost"
-          className="w-full justify-start text-gray-500 hover:text-red-600 hover:bg-red-50 h-12 rounded-xl group transition-all"
+          className="w-full justify-start text-gray-500 hover:text-red-600 hover:bg-red-50 h-11 rounded-xl transition-all"
           onClick={onLogout}
         >
-          <div className="mr-3 p-2 rounded-lg bg-gray-50 text-gray-400 group-hover:bg-red-100 group-hover:text-red-500 transition-colors">
-            <LogOut className="h-5 w-5" />
+          <div className="mr-3 p-1.5 rounded-lg text-gray-400">
+            <LogOut className="h-4 w-4" />
           </div>
-          <span className="font-medium">Déconnexion</span>
+          <span className="text-sm font-medium">Déconnexion</span>
         </Button>
       </div>
     </aside>

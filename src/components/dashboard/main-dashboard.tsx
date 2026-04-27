@@ -11,7 +11,8 @@ import {
   Menu,
   X,
   Clock,
-  Sparkles
+  Sparkles,
+  ChevronRight
 } from "lucide-react"
 
 import { 
@@ -87,6 +88,42 @@ interface Demande {
 
 interface Stats {
   [key: string]: number | Record<string, number>
+}
+
+// Section Header Component - Beautiful & Harmonious
+function SectionHeader({ 
+  title, 
+  subtitle, 
+  icon: Icon,
+  accentColor = "ivorange"
+}: { 
+  title: string
+  subtitle?: string
+  icon?: React.ElementType
+  accentColor?: "ivorange" | "ivgreen" | "blue" | "purple"
+}) {
+  const colorClasses = {
+    ivorange: "from-ivorange-500 to-ivorange-600",
+    ivgreen: "from-ivgreen-500 to-ivgreen-600",
+    blue: "from-blue-500 to-blue-600",
+    purple: "from-purple-500 to-purple-600"
+  }
+
+  return (
+    <div className="mb-8">
+      <div className="flex items-center gap-4">
+        {Icon && (
+          <div className={`p-3 rounded-2xl bg-gradient-to-br ${colorClasses[accentColor]} shadow-lg`}>
+            <Icon className="h-6 w-6 text-white" strokeWidth={2} />
+          </div>
+        )}
+        <div>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">{title}</h2>
+          {subtitle && <p className="text-gray-500 mt-1 font-medium text-sm sm:text-base">{subtitle}</p>}
+        </div>
+      </div>
+    </div>
+  )
 }
 
 export function MainDashboard() {
@@ -193,12 +230,15 @@ export function MainDashboard() {
             </Button>
             
             <div className="flex items-center gap-2 lg:gap-4">
-              <div className="hidden sm:flex items-center justify-center bg-gradient-to-br from-ivgreen-500 to-ivgreen-700 p-1.5 rounded-xl shadow-lg shadow-ivgreen-500/20 border border-ivgreen-400/30">
+              {/* DSI Logo - No green border */}
+              <div className="hidden sm:flex items-center justify-center bg-white p-1.5 rounded-xl shadow-md border border-gray-100">
                 <Image src="/images/logo-dsi-header.png" alt="Logo DSI" width={32} height={32} className="rounded-md" />
               </div>
               <div className="hidden sm:block">
-                <h1 className="text-sm lg:text-base font-extrabold text-gray-900 tracking-tight">DRH <span className="text-ivorange-500">Sports</span></h1>
-                <p className="text-gray-400 text-[9px] font-semibold uppercase tracking-[0.12em]">Direction des Ressources Humaines</p>
+                <h1 className="text-sm lg:text-base font-extrabold text-gray-900 tracking-tight">
+                  <span className="text-ivorange-500">DSI</span>
+                </h1>
+                <p className="text-gray-400 text-[9px] font-semibold uppercase tracking-[0.12em]">Direction des Systèmes de l'Information</p>
               </div>
               <div className="hidden md:block h-8 w-px bg-gradient-to-b from-transparent via-gray-200 to-transparent"></div>
               <div className="hidden md:flex items-center justify-center bg-white p-1.5 rounded-xl shadow-md border border-gray-100">
@@ -290,13 +330,13 @@ export function MainDashboard() {
             {/* Dashboard Principal (Stats) */}
             {activeTab === "dashboard" && (
               <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-2">
-                  <div>
-                    <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight flex items-center gap-2">
-                      Vue d'ensemble <Sparkles className="h-6 w-6 text-ivorange-500" />
-                    </h2>
-                    <p className="text-gray-500 mt-1 font-medium text-sm sm:text-base">Gérez l'activité RH avec clarté et efficacité.</p>
-                  </div>
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
+                  <SectionHeader 
+                    title="Vue d'ensemble" 
+                    subtitle="Gérez l'activité RH avec clarté et efficacité"
+                    icon={Sparkles}
+                    accentColor="ivorange"
+                  />
                   {user?.role === "AGENT" && (
                     <Button 
                       onClick={() => setShowNewForm(true)} 
@@ -312,24 +352,26 @@ export function MainDashboard() {
                 
                 {user?.role === "ADMIN" && (
                   <div className="mt-12 animate-in fade-in duration-700 delay-150 fill-mode-both">
-                    <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                      Analytique Système
-                      <div className="h-1 flex-1 ml-4 bg-gradient-to-r from-gray-100 to-transparent rounded-full"></div>
-                    </h3>
+                    <SectionHeader 
+                      title="Analytique Système" 
+                      subtitle="Statistiques et tendances"
+                      accentColor="ivgreen"
+                    />
                     <StatsTab stats={stats} />
                   </div>
                 )}
               </div>
             )}
 
-            {/* Autres Onglets... */}
+            {/* Demandes Tab */}
             {activeTab === "demandes" && (
               <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-2">
-                  <div>
-                    <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">Dossiers RH</h2>
-                    <p className="text-gray-500 mt-1 font-medium">Traitement et suivi des actes administratifs.</p>
-                  </div>
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
+                  <SectionHeader 
+                    title="Dossiers RH" 
+                    subtitle="Traitement et suivi des actes administratifs"
+                    accentColor="ivgreen"
+                  />
                   {user?.role === "AGENT" && (
                     <Button 
                       onClick={() => setShowNewForm(true)} 
@@ -354,7 +396,11 @@ export function MainDashboard() {
 
             {activeTab === "historique" && (
               <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight mb-2">Registre des Actions</h2>
+                <SectionHeader 
+                  title="Registre des Actions" 
+                  subtitle="Historique complet des opérations"
+                  accentColor="blue"
+                />
                 <HistoriqueTab demandes={demandes} />
               </div>
             )}
@@ -373,7 +419,11 @@ export function MainDashboard() {
 
             {activeTab === "profil" && (
               <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight mb-2">Espace Personnel</h2>
+                <SectionHeader 
+                  title="Espace Personnel" 
+                  subtitle="Gérez vos informations et préférences"
+                  accentColor="purple"
+                />
                 <ProfilePanel />
               </div>
             )}
@@ -408,7 +458,7 @@ export function MainDashboard() {
           <AlertDialogHeader>
             <AlertDialogTitle className="text-xl font-bold text-gray-900">Confirmation de déconnexion</AlertDialogTitle>
             <AlertDialogDescription className="text-gray-500 text-base">
-              Êtes-vous sûr de vouloir vous déconnecter de votre espace DRH Sports ?
+              Êtes-vous sûr de vouloir vous déconnecter de votre espace DSI ?
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="mt-6 gap-3 sm:gap-0">
@@ -633,4 +683,3 @@ function StatsTab({ stats }: { stats: Stats }) {
     </div>
   )
 }
-
