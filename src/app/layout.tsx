@@ -15,14 +15,14 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "DRH Ministère des Sports - Côte d'Ivoire",
-  description: "Application de gestion des ressources humaines du Ministère des Sports de Côte d'Ivoire. Dématérialisation du circuit de traitement des actes administratifs.",
-  keywords: ["DRH", "Ministère des Sports", "Côte d'Ivoire", "Ressources Humaines", "Administration"],
+  title: "DSI - Ministère des Sports - Côte d'Ivoire",
+  description: "Direction des Systèmes de l'Information du Ministère des Sports de Côte d'Ivoire. Gestion des ressources humaines et dématérialisation des actes administratifs.",
+  keywords: ["DSI", "Direction des Systèmes de l'Information", "Ministère des Sports", "Côte d'Ivoire", "Ressources Humaines", "Administration"],
   authors: [{ name: "Ministère des Sports - CI" }],
   manifest: "/manifest.json",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#009E60" },
-    { media: "(prefers-color-scheme: dark)", color: "#009E60" },
+    { media: "(prefers-color-scheme: light)", color: "#F77F00" },
+    { media: "(prefers-color-scheme: dark)", color: "#F77F00" },
   ],
   icons: {
     icon: [
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     "mobile-web-app-capable": "yes",
     "apple-mobile-web-app-capable": "yes",
     "apple-mobile-web-app-status-bar-style": "default",
-    "apple-mobile-web-app-title": "DRH Sports",
+    "apple-mobile-web-app-title": "DSI",
   },
 };
 
@@ -47,11 +47,11 @@ export default function RootLayout({
   return (
     <html lang="fr" suppressHydrationWarning>
       <head>
-        <meta name="application-name" content="DRH Sports" />
+        <meta name="application-name" content="DSI" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="DRH Sports" />
-        <meta name="theme-color" content="#009E60" />
+        <meta name="apple-mobile-web-app-title" content="DSI" />
+        <meta name="theme-color" content="#F77F00" />
         <link rel="manifest" href="/manifest.json" />
         <link rel="icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" href="/apple-icon.png" />
