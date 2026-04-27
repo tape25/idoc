@@ -83,11 +83,7 @@ export function LandingPage({ onLoginClick }: { onLoginClick: () => void }) {
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
             {/* Left Content */}
             <div className="flex flex-col items-start text-left">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border-ivorange-200 text-ivorange-700 text-sm font-semibold mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700 shadow-sm">
-                <span className="flex h-2 w-2 rounded-full bg-ivorange-500 animate-pulse"></span>
-                Portail Administratif Nouvelle Génération
-              </div>
-              
+
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-gray-900 tracking-tight leading-[1.1] mb-6 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-150 fill-mode-both">
                 L'excellence RH, <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-ivorange-500 via-ivorange-400 to-ivgreen-500">à portée de clic.</span>
