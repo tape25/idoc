@@ -11,7 +11,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { ShieldCheck, FileText, ArrowRight, Zap, Globe, CheckCircle2, Clock, Users, LockKeyhole, Bell, CheckSquare, LogIn } from "lucide-react"
+import { ShieldCheck, FileText, ArrowRight, Zap, Globe, CheckCircle2, Clock, Users, LockKeyhole, Bell, CheckSquare, User } from "lucide-react"
 
 export function LandingPage({ onLoginClick }: { onLoginClick: () => void }) {
   const marqueeItems = [
@@ -45,9 +45,13 @@ export function LandingPage({ onLoginClick }: { onLoginClick: () => void }) {
           </div>
           {/* Right side: Login icon + Ministry Logo at extreme right */}
           <div className="flex items-center gap-3 sm:gap-4">
-            <Button onClick={onLoginClick} variant="ghost" size="icon" className="h-9 w-9 rounded-full text-gray-600 hover:text-ivorange-600 hover:bg-ivorange-50 transition-all" title="Se connecter">
-              <LogIn className="h-5 w-5" />
-            </Button>
+            <button 
+              onClick={onLoginClick}
+              className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-ivorange-50 to-ivorange-100 border border-ivorange-200/60 hover:from-ivorange-100 hover:to-ivorange-150 hover:border-ivorange-300 transition-all duration-300 hover:shadow-md hover:shadow-ivorange-200/30"
+              title="Se connecter"
+            >
+              <User className="h-5 w-5 text-ivorange-600" strokeWidth={1.5} />
+            </button>
             {/* Ministry Logo - Extreme Right */}
             <div className="flex items-center gap-2.5">
               <div className="bg-white p-1.5 rounded-xl shadow-md border border-gray-100">
