@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { db } from "@/lib/db"
+import bcrypt from "bcryptjs"
 
 // GET - Récupérer une demande spécifique
 export async function GET(
@@ -55,7 +56,7 @@ export async function GET(
   }
 }
 
-// PUT - Mettre à jour le statut d'une demande (workflow)
+// PUT - Mettre à jour le statut d'une demande (workflow) ou modifier une demande
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -69,7 +70,7 @@ export async function PUT(
 
     const { id } = await params
     const body = await request.json()
-    const { action, commentaire } = body
+    const { action, commentaire, password, type, titre, motif, dateDebut, dateFin } = body
 
     const demande = await db.demande.findUnique({
       where: { id },
@@ -78,6 +79,46 @@ export async function PUT(
 
     if (!demande) {
       return NextResponse.json({ error: "Demande non trouvée" }, { status: 404 })
+    }
+
+    // === AGENT: Modifier une demande (uniquement si SOUMIS) ===
+    if (action === "MODIFIER") {
+      if (session.user.role !== "AGENT" || demande.agentId !== session.user.id) {
+        return NextResponse.json({ error: "Action non autorisée" }, { status: 403 })
+      }
+      
+      if (demande.statut !== "SOUMIS") {
+        return NextResponse.json({ error: "Cette demande ne peut plus être modifiée" }, { status: 400 })
+      }
+
+      const updatedDemande = await db.demande.update({
+        where: { id },
+        data: {
+          type: type || demande.type,
+          titre: titre || demande.titre,
+          motif: motif !== undefined ? motif : demande.motif,
+          dateDebut: dateDebut ? new Date(dateDebut) : demande.dateDebut,
+          dateFin: dateFin ? new Date(dateFin) : demande.dateFin,
+          historique: {
+            create: {
+              action: "Modification de la demande",
+              details: "Demande modifiée par l'agent",
+              ancienStatut: demande.statut,
+              nouveauStatut: demande.statut,
+              userId: session.user.id
+            }
+          }
+        },
+        include: {
+          agent: true,
+          historique: {
+            include: { user: { select: { nom: true, prenom: true, role: true } } },
+            orderBy: { createdAt: "desc" }
+          }
+        }
+      })
+
+      return NextResponse.json(updatedDemande)
     }
 
     let nouveauStatut = demande.statut
@@ -99,6 +140,15 @@ export async function PUT(
         if (session.user.role !== "SERVICE_COURRIER") {
           return NextResponse.json({ error: "Action non autorisée" }, { status: 403 })
         }
+        // Vérifier le mot de passe
+        if (password) {
+          const user = await db.user.findUnique({ where: { id: session.user.id } })
+          if (!user || !(await bcrypt.compare(password, user.password))) {
+            return NextResponse.json({ error: "Mot de passe incorrect" }, { status: 401 })
+          }
+        } else {
+          return NextResponse.json({ error: "Mot de passe requis pour cette action" }, { status: 400 })
+        }
         nouveauStatut = "VALIDEE_COURRIER"
         actionDescription = "Validé par le service courrier"
         notificationTitre = "Nouvelle demande validée"
@@ -108,6 +158,15 @@ export async function PUT(
       case "REJETER_COURRIER":
         if (session.user.role !== "SERVICE_COURRIER") {
           return NextResponse.json({ error: "Action non autorisée" }, { status: 403 })
+        }
+        // Vérifier le mot de passe
+        if (password) {
+          const user = await db.user.findUnique({ where: { id: session.user.id } })
+          if (!user || !(await bcrypt.compare(password, user.password))) {
+            return NextResponse.json({ error: "Mot de passe incorrect" }, { status: 401 })
+          }
+        } else {
+          return NextResponse.json({ error: "Mot de passe requis pour cette action" }, { status: 400 })
         }
         nouveauStatut = "REJETE_COURRIER"
         actionDescription = "Rejeté par le service courrier"
@@ -270,6 +329,59 @@ export async function PUT(
     console.error("Erreur mise à jour demande:", error)
     return NextResponse.json(
       { error: "Erreur lors de la mise à jour de la demande" },
+      { status: 500 }
+    )
+  }
+}
+
+// DELETE - Supprimer une demande (uniquement si SOUMIS par l'agent)
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const session = await getServerSession(authOptions)
+    
+    if (!session?.user) {
+      return NextResponse.json({ error: "Non autorisé" }, { status: 401 })
+    }
+
+    const { id } = await params
+
+    const demande = await db.demande.findUnique({
+      where: { id }
+    })
+
+    if (!demande) {
+      return NextResponse.json({ error: "Demande non trouvée" }, { status: 404 })
+    }
+
+    // Seul l'agent peut supprimer sa demande et uniquement si SOUMIS
+    if (session.user.role === "AGENT") {
+      if (demande.agentId !== session.user.id) {
+        return NextResponse.json({ error: "Action non autorisée" }, { status: 403 })
+      }
+      
+      if (demande.statut !== "SOUMIS") {
+        return NextResponse.json({ error: "Cette demande ne peut plus être supprimée car elle a déjà été traitée" }, { status: 400 })
+      }
+    } else if (session.user.role !== "ADMIN") {
+      return NextResponse.json({ error: "Action non autorisée" }, { status: 403 })
+    }
+
+    // Supprimer les pièces jointes, historique et notifications associés
+    await db.pieceJointe.deleteMany({ where: { demandeId: id } })
+    await db.historyLog.deleteMany({ where: { demandeId: id } })
+    await db.notification.deleteMany({ where: { demandeId: id } })
+    
+    // Supprimer la demande
+    await db.demande.delete({ where: { id } })
+
+    return NextResponse.json({ success: true, message: "Demande supprimée avec succès" })
+  } catch (error) {
+    console.error("Erreur suppression demande:", error)
+    return NextResponse.json(
+      { error: "Erreur lors de la suppression de la demande" },
       { status: 500 }
     )
   }

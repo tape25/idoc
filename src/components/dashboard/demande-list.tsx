@@ -7,6 +7,16 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { 
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+import { 
   Eye, 
   Check, 
   X, 
@@ -20,8 +30,13 @@ import {
   Filter,
   Printer,
   FileArchive,
-  User
+  User,
+  Pencil,
+  Trash2,
+  Loader2,
+  LockKeyhole
 } from "lucide-react"
+import { DemandeForm } from "./demande-form"
 
 interface Demande {
   id: string
@@ -54,8 +69,9 @@ interface Demande {
 interface DemandeListProps {
   demandes: Demande[]
   userRole: string
-  onAction: (id: string, action: string, commentaire?: string) => void
+  onAction: (id: string, action: string, commentaire?: string, password?: string) => Promise<void>
   onViewHistorique: (demande: Demande) => void
+  onRefresh: () => void
 }
 
 const statusLabels: Record<string, string> = {
@@ -95,7 +111,7 @@ const typeLabels: Record<string, string> = {
   AUTRE: "Autre"
 }
 
-export function DemandeList({ demandes, userRole, onAction, onViewHistorique }: DemandeListProps) {
+export function DemandeList({ demandes, userRole, onAction, onViewHistorique, onRefresh }: DemandeListProps) {
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [processing, setProcessing] = useState<string | null>(null)
   
@@ -103,10 +119,112 @@ export function DemandeList({ demandes, userRole, onAction, onViewHistorique }: 
   const [filterStatut, setFilterStatut] = useState("TOUS")
   const [filterType, setFilterType] = useState("TOUS")
 
-  const handleAction = async (id: string, action: string) => {
-    setProcessing(id)
-    await onAction(id, action)
-    setProcessing(null)
+  // Confirmation dialog state
+  const [confirmDialog, setConfirmDialog] = useState<{
+    open: boolean
+    action: string
+    demande: Demande | null
+    requiresPassword: boolean
+    password: string
+    commentaire: string
+    error: string
+  }>({
+    open: false,
+    action: "",
+    demande: null,
+    requiresPassword: false,
+    password: "",
+    commentaire: "",
+    error: ""
+  })
+
+  // Edit form state
+  const [editForm, setEditForm] = useState<{
+    open: boolean
+    demande: Demande | null
+  }>({
+    open: false,
+    demande: null
+  })
+
+  const handleAction = async (id: string, action: string, demande: Demande) => {
+    // Actions nécessitant un mot de passe
+    const requiresPassword = action === "VALIDER_COURRIER" || action === "REJETER_COURRIER"
+    
+    // Ouvrir le dialogue de confirmation
+    setConfirmDialog({
+      open: true,
+      action,
+      demande,
+      requiresPassword,
+      password: "",
+      commentaire: action === "REJETER_COURRIER" ? "" : "",
+      error: ""
+    })
+  }
+
+  const executeAction = async () => {
+    if (!confirmDialog.demande) return
+
+    const { action, demande, password, commentaire } = confirmDialog
+
+    setProcessing(demande.id)
+    setConfirmDialog(prev => ({ ...prev, error: "" }))
+
+    try {
+      await onAction(demande.id, action, commentaire || undefined, password || undefined)
+      setConfirmDialog(prev => ({ ...prev, open: false }))
+      onRefresh()
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : "Une erreur s'est produite"
+      setConfirmDialog(prev => ({ ...prev, error: errorMessage }))
+    } finally {
+      setProcessing(null)
+    }
+  }
+
+  const handleDelete = async (demande: Demande) => {
+    setConfirmDialog({
+      open: true,
+      action: "DELETE",
+      demande,
+      requiresPassword: false,
+      password: "",
+      commentaire: "",
+      error: ""
+    })
+  }
+
+  const executeDelete = async () => {
+    if (!confirmDialog.demande) return
+
+    const { demande } = confirmDialog
+
+    setProcessing(demande.id)
+    setConfirmDialog(prev => ({ ...prev, error: "" }))
+
+    try {
+      const response = await fetch(`/api/demandes/${demande.id}`, {
+        method: "DELETE"
+      })
+
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.error || "Erreur lors de la suppression")
+      }
+
+      setConfirmDialog(prev => ({ ...prev, open: false }))
+      onRefresh()
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : "Une erreur s'est produite"
+      setConfirmDialog(prev => ({ ...prev, error: errorMessage }))
+    } finally {
+      setProcessing(null)
+    }
+  }
+
+  const handleEdit = (demande: Demande) => {
+    setEditForm({ open: true, demande })
   }
 
   const handlePrint = (demande: Demande) => {
@@ -114,13 +232,13 @@ export function DemandeList({ demandes, userRole, onAction, onViewHistorique }: 
   }
 
   const getActionsForRole = (demande: Demande) => {
-    const actions: { action: string; label: string; icon: React.ReactNode; variant: "default" | "destructive" | "outline" | "secondary" }[] = []
+    const actions: { action: string; label: string; icon: React.ReactNode; variant: "default" | "destructive" | "outline" | "secondary"; requiresPassword?: boolean }[] = []
 
     switch (userRole) {
       case "SERVICE_COURRIER":
         if (demande.statut === "SOUMIS") {
-          actions.push({ action: "VALIDER_COURRIER", label: "Valider", icon: <Check className="h-4 w-4" />, variant: "default" })
-          actions.push({ action: "REJETER_COURRIER", label: "Rejeter", icon: <X className="h-4 w-4" />, variant: "destructive" })
+          actions.push({ action: "VALIDER_COURRIER", label: "Valider", icon: <Check className="h-4 w-4" />, variant: "default", requiresPassword: true })
+          actions.push({ action: "REJETER_COURRIER", label: "Rejeter", icon: <X className="h-4 w-4" />, variant: "destructive", requiresPassword: true })
         }
         if (demande.statut === "VALIDEE_COURRIER") {
           actions.push({ action: "TRANSMETTRE_SECRETARIAT", label: "Transmettre au secrétariat", icon: <Send className="h-4 w-4" />, variant: "default" })
@@ -152,6 +270,11 @@ export function DemandeList({ demandes, userRole, onAction, onViewHistorique }: 
         break
 
       case "AGENT":
+        if (demande.statut === "SOUMIS") {
+          // L'agent peut modifier ou supprimer tant que c'est SOUMIS
+          actions.push({ action: "EDIT", label: "Modifier", icon: <Pencil className="h-4 w-4" />, variant: "outline" })
+          actions.push({ action: "DELETE", label: "Supprimer", icon: <Trash2 className="h-4 w-4" />, variant: "destructive" })
+        }
         if (demande.statut === "DISPONIBLE") {
           actions.push({ action: "RETIRER", label: "Confirmer le retrait", icon: <Check className="h-4 w-4" />, variant: "default" })
         }
@@ -173,6 +296,22 @@ export function DemandeList({ demandes, userRole, onAction, onViewHistorique }: 
 
     return matchesSearch && matchesStatut && matchesType
   })
+
+  const getActionLabel = (action: string) => {
+    const labels: Record<string, string> = {
+      VALIDER_COURRIER: "valider",
+      REJETER_COURRIER: "rejeter",
+      DELETE: "supprimer",
+      TRANSMETTRE_SECRETARIAT: "transmettre au secrétariat",
+      NOTIFIER: "notifier l'agent",
+      TRAITER: "traiter",
+      SIGNER: "signer",
+      RETOURNER_SECRETARIAT: "retourner au secrétariat",
+      TRANSMETTRE_COURRIER: "transmettre au courrier",
+      RETIRER: "confirmer le retrait"
+    }
+    return labels[action] || action.toLowerCase()
+  }
 
   return (
     <div className="space-y-6">
@@ -359,12 +498,22 @@ export function DemandeList({ demandes, userRole, onAction, onViewHistorique }: 
                       <div className="flex-1 flex flex-wrap gap-2">
                         {actions.map((action, i) => {
                           const isPrimaryAction = action.variant === 'default'
+                          const isDestructiveAction = action.variant === 'destructive'
                           return (
                             <Button
                               key={i}
                               variant={action.variant}
-                              className={isPrimaryAction ? "bg-ivgreen-600 hover:bg-ivgreen-700 text-white rounded-xl shadow-md h-10" : "rounded-xl h-10"}
-                              onClick={(e) => { e.stopPropagation(); handleAction(demande.id, action.action); }}
+                              className={`${isPrimaryAction ? "bg-ivgreen-600 hover:bg-ivgreen-700 text-white" : ""} ${isDestructiveAction ? "bg-red-600 hover:bg-red-700 text-white" : ""} rounded-xl shadow-md h-10`}
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                if (action.action === "EDIT") {
+                                  handleEdit(demande)
+                                } else if (action.action === "DELETE") {
+                                  handleDelete(demande)
+                                } else {
+                                  handleAction(demande.id, action.action, demande)
+                                }
+                              }}
                               disabled={isProcessing}
                             >
                               {action.icon}
@@ -399,6 +548,99 @@ export function DemandeList({ demandes, userRole, onAction, onViewHistorique }: 
             )
           })}
         </div>
+      )}
+
+      {/* Confirmation Dialog with Password */}
+      <AlertDialog open={confirmDialog.open} onOpenChange={(open) => setConfirmDialog(prev => ({ ...prev, open, error: "" }))}>
+        <AlertDialogContent className="bg-white rounded-3xl border-gray-100 shadow-2xl max-w-md">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-xl font-bold text-gray-900">
+              {confirmDialog.action === "DELETE" ? "Confirmer la suppression" : `Confirmer l'action`}
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-gray-500 text-base">
+              {confirmDialog.action === "DELETE" 
+                ? `Êtes-vous sûr de vouloir supprimer la demande "${confirmDialog.demande?.titre}" ? Cette action est irréversible.`
+                : `Êtes-vous sûr de vouloir ${getActionLabel(confirmDialog.action)} cette demande ?`
+              }
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+          {/* Password Field for Service Courrier */}
+          {confirmDialog.requiresPassword && (
+            <div className="space-y-3 py-4">
+              <div className="flex items-center gap-2 text-sm text-gray-600 bg-ivorange-50 p-3 rounded-xl border border-ivorange-100">
+                <LockKeyhole className="h-4 w-4 text-ivorange-500" />
+                <span>Veuillez entrer votre mot de passe pour confirmer cette action</span>
+              </div>
+              <Input
+                type="password"
+                placeholder="Votre mot de passe"
+                value={confirmDialog.password}
+                onChange={(e) => setConfirmDialog(prev => ({ ...prev, password: e.target.value, error: "" }))}
+                className="h-12 rounded-xl"
+              />
+            </div>
+          )}
+
+          {/* Comment field for rejection */}
+          {confirmDialog.action === "REJETER_COURRIER" && (
+            <div className="space-y-2 py-2">
+              <label className="text-sm font-medium text-gray-700">Motif du rejet</label>
+              <Input
+                placeholder="Ex: Dossier incomplet, pièce manquante..."
+                value={confirmDialog.commentaire}
+                onChange={(e) => setConfirmDialog(prev => ({ ...prev, commentaire: e.target.value }))}
+                className="h-12 rounded-xl"
+              />
+            </div>
+          )}
+
+          {confirmDialog.error && (
+            <div className="bg-red-50 text-red-600 text-sm p-3 rounded-xl border border-red-100">
+              {confirmDialog.error}
+            </div>
+          )}
+
+          <AlertDialogFooter className="mt-4 gap-3">
+            <AlertDialogCancel className="rounded-xl border-gray-200 text-gray-600 hover:bg-gray-50 h-11">
+              Annuler
+            </AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={(e) => {
+                e.preventDefault()
+                if (confirmDialog.action === "DELETE") {
+                  executeDelete()
+                } else {
+                  executeAction()
+                }
+              }}
+              disabled={processing !== null || (confirmDialog.requiresPassword && !confirmDialog.password)}
+              className={`rounded-xl text-white h-11 ${
+                confirmDialog.action === "DELETE" || confirmDialog.action === "REJETER_COURRIER"
+                  ? "bg-red-600 hover:bg-red-700" 
+                  : "bg-ivgreen-600 hover:bg-ivgreen-700"
+              }`}
+            >
+              {processing ? (
+                <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Traitement...</>
+              ) : (
+                "Confirmer"
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Edit Form Modal */}
+      {editForm.open && editForm.demande && (
+        <DemandeForm
+          onClose={() => setEditForm({ open: false, demande: null })}
+          onSuccess={() => {
+            setEditForm({ open: false, demande: null })
+            onRefresh()
+          }}
+          editDemande={editForm.demande}
+        />
       )}
     </div>
   )

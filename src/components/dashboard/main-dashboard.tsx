@@ -161,20 +161,25 @@ export function MainDashboard() {
     }
   }
 
-  const handleAction = async (demandeId: string, action: string, commentaire?: string) => {
+  const handleAction = async (demandeId: string, action: string, commentaire?: string, password?: string) => {
     try {
       const response = await fetch(`/api/demandes/${demandeId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action, commentaire })
+        body: JSON.stringify({ action, commentaire, password })
       })
 
-      if (response.ok) {
-        fetchDashboardData()
-        setSelectedDemande(null)
+      const data = await response.json()
+      
+      if (!response.ok) {
+        throw new Error(data.error || "Erreur lors de l'action")
       }
+
+      fetchDashboardData()
+      setSelectedDemande(null)
     } catch (error) {
       console.error("Erreur action:", error)
+      throw error
     }
   }
 
@@ -390,6 +395,7 @@ export function MainDashboard() {
                     setSelectedDemande(d)
                     setShowHistorique(true)
                   }}
+                  onRefresh={fetchDashboardData}
                 />
               </div>
             )}
