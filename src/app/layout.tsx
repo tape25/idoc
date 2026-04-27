@@ -19,6 +19,10 @@ export const metadata: Metadata = {
   description: "Application de gestion des ressources humaines du Ministère des Sports de Côte d'Ivoire. Dématérialisation du circuit de traitement des actes administratifs.",
   keywords: ["DRH", "Ministère des Sports", "Côte d'Ivoire", "Ressources Humaines", "Administration"],
   authors: [{ name: "Ministère des Sports - CI" }],
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/apple-icon.png",
+  },
 };
 
 export default function RootLayout({
