@@ -90,7 +90,6 @@ interface Stats {
   [key: string]: number | Record<string, number>
 }
 
-// Section Header Component - Beautiful & Harmonious
 function SectionHeader({ 
   title, 
   subtitle, 
@@ -113,7 +112,7 @@ function SectionHeader({
     <div className="mb-8">
       <div className="flex items-center gap-4">
         {Icon && (
-          <div className={`p-3 rounded-2xl bg-gradient-to-br ${colorClasses[accentColor]} shadow-lg`}>
+          <div className={`p-3 rounded-lg bg-gradient-to-br ${colorClasses[accentColor]} shadow-sm`}>
             <Icon className="h-6 w-6 text-white" strokeWidth={2} />
           </div>
         )}
@@ -196,12 +195,10 @@ export function MainDashboard() {
 
   if (status === "loading" || loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-ivory-50 relative overflow-hidden">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-ivorange-500/10 rounded-full blur-3xl animate-pulse-slow"></div>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#f7f8f5] surface-grid relative overflow-hidden">
         <div className="relative z-10 flex flex-col items-center">
           <div className="relative mb-6">
-            <div className="absolute inset-0 bg-gradient-to-tr from-ivorange-500 to-ivgreen-500 rounded-full blur animate-spin opacity-50"></div>
-            <div className="bg-white p-3 rounded-full relative z-10 shadow-xl border border-white/50">
+            <div className="bg-white p-3 rounded-lg relative z-10 shadow-xl border border-gray-200">
               <Image src="/images/logo-dsi-header.png" alt="Logo DSI" width={48} height={48} className="rounded-lg" />
             </div>
           </div>
@@ -217,13 +214,8 @@ export function MainDashboard() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50/50 relative">
-      {/* Background Orbs */}
-      <div className="fixed top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-ivorange-500/5 blur-[120px] pointer-events-none" />
-      <div className="fixed bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-ivgreen-500/5 blur-[120px] pointer-events-none" />
-
-      {/* Header Premium */}
-      <header className="glass sticky top-0 z-50 border-b border-gray-200/60 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
+    <div className="min-h-screen flex flex-col bg-[#f7f8f5] surface-grid relative">
+      <header className="sticky top-0 z-50 border-b border-gray-200/80 bg-white/95 backdrop-blur-md shadow-sm">
         <div className="max-w-full mx-auto px-4 py-3 sm:px-6 lg:px-8 flex items-center justify-between h-20">
           <div className="flex items-center gap-4">
             <Button 
@@ -236,7 +228,7 @@ export function MainDashboard() {
             
             <div className="flex items-center gap-2 lg:gap-4">
               {/* DSI Logo - No green border */}
-              <div className="hidden sm:flex items-center justify-center bg-white p-1.5 rounded-xl shadow-md border border-gray-100">
+              <div className="hidden sm:flex items-center justify-center bg-white p-1.5 rounded-lg shadow-sm border border-gray-200">
                 <Image src="/images/logo-dsi-header.png" alt="Logo DSI" width={32} height={32} className="rounded-md" />
               </div>
               <div className="hidden sm:block">
@@ -246,7 +238,7 @@ export function MainDashboard() {
                 <p className="text-gray-400 text-[9px] font-semibold uppercase tracking-[0.12em]">Direction des Systèmes de l'Information</p>
               </div>
               <div className="hidden md:block h-8 w-px bg-gradient-to-b from-transparent via-gray-200 to-transparent"></div>
-              <div className="hidden md:flex items-center justify-center bg-white p-1.5 rounded-xl shadow-md border border-gray-100">
+              <div className="hidden md:flex items-center justify-center bg-white p-1.5 rounded-lg shadow-sm border border-gray-200">
                 <Image src="/images/logo-ministere-sports.png" alt="Ministère des Sports" width={32} height={32} className="rounded-md" />
               </div>
               <div className="hidden lg:block">
@@ -264,8 +256,8 @@ export function MainDashboard() {
                 <p className="font-bold text-gray-900 text-sm">{user?.prenom} {user?.nom}</p>
                 <p className="text-ivorange-600 text-xs font-semibold tracking-wide uppercase">{getRoleName(user?.role || "")}</p>
               </div>
-              <div className="h-10 w-10 rounded-xl bg-gradient-to-tr from-ivorange-100 to-ivgreen-100 border border-white flex items-center justify-center shadow-inner">
-                <span className="font-bold text-gray-700 text-lg">{user?.prenom?.[0]}{user?.nom?.[0]}</span>
+              <div className="h-10 w-10 rounded-lg bg-gray-950 text-white border border-gray-800 flex items-center justify-center shadow-sm">
+                <span className="font-bold text-white text-lg">{user?.prenom?.[0]}{user?.nom?.[0]}</span>
               </div>
             </div>
 
@@ -281,7 +273,7 @@ export function MainDashboard() {
             <Button 
               variant="ghost" 
               onClick={() => setShowLogoutConfirm(true)}
-              className="hidden sm:flex text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-xl font-medium px-4"
+              className="hidden sm:flex text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg font-medium px-4"
             >
               <LogOut className="h-4 w-4 mr-2" />
               Quitter
@@ -312,7 +304,7 @@ export function MainDashboard() {
             <div className="fixed inset-y-0 left-0 w-72 bg-white shadow-2xl flex flex-col animate-in slide-in-from-left" onClick={e => e.stopPropagation()}>
               <div className="h-20 flex items-center justify-between px-6 border-b border-gray-100 bg-gray-50/50">
                 <span className="font-bold text-gray-900">Menu</span>
-                <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(false)} className="rounded-full">
+                <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(false)} className="rounded-lg">
                   <X className="h-5 w-5" />
                 </Button>
               </div>
@@ -345,7 +337,7 @@ export function MainDashboard() {
                   {user?.role === "AGENT" && (
                     <Button 
                       onClick={() => setShowNewForm(true)} 
-                      className="bg-gradient-to-r from-ivorange-500 to-ivorange-600 hover:from-ivorange-600 hover:to-ivorange-700 text-white rounded-full px-6 shadow-lg shadow-ivorange-500/25 transition-all hover:scale-105 h-12"
+                      className="bg-ivorange-500 hover:bg-ivorange-600 text-white rounded-lg px-6 shadow-lg shadow-ivorange-900/10 transition-all hover:-translate-y-0.5 h-12"
                     >
                       <Plus className="h-5 w-5 mr-2" />
                       Nouvelle demande
@@ -380,7 +372,7 @@ export function MainDashboard() {
                   {user?.role === "AGENT" && (
                     <Button 
                       onClick={() => setShowNewForm(true)} 
-                      className="bg-gradient-to-r from-ivorange-500 to-ivorange-600 hover:from-ivorange-600 hover:to-ivorange-700 text-white rounded-full px-6 shadow-lg shadow-ivorange-500/25 h-12 transition-all hover:scale-105"
+                      className="bg-ivorange-500 hover:bg-ivorange-600 text-white rounded-lg px-6 shadow-lg shadow-ivorange-900/10 h-12 transition-all hover:-translate-y-0.5"
                     >
                       <Plus className="h-5 w-5 sm:mr-2" />
                       <span className="hidden sm:inline">Nouvelle demande</span>
@@ -460,7 +452,7 @@ export function MainDashboard() {
 
       {/* Logout Confirmation */}
       <AlertDialog open={showLogoutConfirm} onOpenChange={setShowLogoutConfirm}>
-        <AlertDialogContent className="bg-white rounded-3xl border-gray-100 shadow-2xl">
+        <AlertDialogContent className="bg-white rounded-lg border-gray-200 shadow-2xl">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-xl font-bold text-gray-900">Confirmation de déconnexion</AlertDialogTitle>
             <AlertDialogDescription className="text-gray-500 text-base">
@@ -468,10 +460,10 @@ export function MainDashboard() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="mt-6 gap-3 sm:gap-0">
-            <AlertDialogCancel className="rounded-xl border-gray-200 text-gray-600 hover:bg-gray-50 h-11">Annuler</AlertDialogCancel>
+            <AlertDialogCancel className="rounded-lg border-gray-200 text-gray-600 hover:bg-gray-50 h-11">Annuler</AlertDialogCancel>
             <AlertDialogAction 
               onClick={() => signOut({ callbackUrl: "/" })}
-              className="rounded-xl bg-red-600 hover:bg-red-700 text-white shadow-md shadow-red-600/20 h-11"
+              className="rounded-lg bg-red-600 hover:bg-red-700 text-white shadow-md shadow-red-600/20 h-11"
             >
               <LogOut className="h-4 w-4 mr-2" />
               Se déconnecter
@@ -500,7 +492,7 @@ function HistoriqueTab({ demandes }: { demandes: Demande[] }) {
   }
 
   return (
-    <div className="glass-card rounded-3xl p-6 sm:p-8">
+    <div className="rounded-lg border border-gray-200 bg-white p-6 sm:p-8 shadow-sm">
       <div className="space-y-6 relative before:absolute before:inset-0 before:ml-[1.125rem] before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-gray-200 before:to-transparent">
         {demandes.flatMap(d => (d.historique || []).map(h => ({ ...h, demandeRef: d.numeroEnregistrement || "Non enregistré" })))
           .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
@@ -511,7 +503,7 @@ function HistoriqueTab({ demandes }: { demandes: Demande[] }) {
             <div className={`flex items-center justify-center w-8 h-8 rounded-full border-4 border-white shadow-md shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 ${statusColors[h.nouveauStatut] || "bg-gray-400"}`}>
             </div>
             
-            <div className="w-[calc(100%-3rem)] md:w-[calc(50%-2.5rem)] p-5 rounded-2xl bg-white border border-gray-100 shadow-sm group-hover:shadow-md transition-shadow">
+            <div className="w-[calc(100%-3rem)] md:w-[calc(50%-2.5rem)] p-5 rounded-lg bg-white border border-gray-200 shadow-sm group-hover:shadow-md transition-shadow">
               <div className="flex flex-col gap-1 mb-2">
                 <time className="text-xs font-semibold tracking-wide uppercase text-ivorange-500">{new Date(h.createdAt).toLocaleString("fr-FR")}</time>
                 <h4 className="text-base font-bold text-gray-900">{h.action}</h4>
@@ -526,7 +518,7 @@ function HistoriqueTab({ demandes }: { demandes: Demande[] }) {
                 <span>{h.user.prenom} {h.user.nom} ({h.user.role})</span>
               </div>
               {h.details && (
-                <div className="mt-4 p-3 bg-gray-50/80 rounded-xl text-sm text-gray-700 border border-gray-100/50">
+                <div className="mt-4 p-3 bg-gray-50/80 rounded-lg text-sm text-gray-700 border border-gray-100/50">
                   {h.details}
                 </div>
               )}
@@ -534,7 +526,7 @@ function HistoriqueTab({ demandes }: { demandes: Demande[] }) {
           </div>
         ))}
         {demandes.flatMap(d => d.historique || []).length === 0 && (
-          <div className="py-20 flex flex-col items-center justify-center text-gray-400 relative z-10 bg-white/50 rounded-2xl">
+          <div className="py-20 flex flex-col items-center justify-center text-gray-400 relative z-10 bg-white/50 rounded-lg">
             <Clock className="h-16 w-16 mb-4 text-gray-200" />
             <p className="font-medium text-lg text-gray-500">Aucune activité enregistrée</p>
           </div>
@@ -587,8 +579,7 @@ function StatsTab({ stats }: { stats: Stats }) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
       {/* Donut Chart - Statuts */}
-      <div className="glass-card rounded-3xl p-8 relative overflow-hidden group min-h-[400px] flex flex-col border border-white/60">
-        <div className="absolute top-0 right-0 w-40 h-40 bg-ivorange-500/5 rounded-full blur-3xl group-hover:bg-ivorange-500/10 transition-colors"></div>
+      <div className="rounded-lg border border-gray-200 bg-white p-8 relative overflow-hidden group min-h-[400px] flex flex-col shadow-sm">
         <h3 className="font-bold text-xl mb-2 text-gray-900 relative z-10">Répartition par Statut</h3>
         <p className="text-sm text-gray-500 mb-6 relative z-10">Vue globale de l'avancement des dossiers</p>
         
@@ -617,7 +608,7 @@ function StatsTab({ stats }: { stats: Stats }) {
               </PieChart>
             </ResponsiveContainer>
           ) : (
-            <div className="flex items-center justify-center h-full text-gray-400 font-medium bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">
+            <div className="flex items-center justify-center h-full text-gray-400 font-medium bg-gray-50/50 rounded-lg border border-dashed border-gray-200">
               Aucune donnée de statut disponible
             </div>
           )}
@@ -638,8 +629,7 @@ function StatsTab({ stats }: { stats: Stats }) {
       </div>
 
       {/* Bar Chart - Actes */}
-      <div className="glass-card rounded-3xl p-8 relative overflow-hidden group min-h-[400px] flex flex-col border border-white/60">
-        <div className="absolute top-0 right-0 w-40 h-40 bg-ivgreen-500/5 rounded-full blur-3xl group-hover:bg-ivgreen-500/10 transition-colors"></div>
+      <div className="rounded-lg border border-gray-200 bg-white p-8 relative overflow-hidden group min-h-[400px] flex flex-col shadow-sm">
         <h3 className="font-bold text-xl mb-2 text-gray-900 relative z-10">Répartition par Type d'Acte</h3>
         <p className="text-sm text-gray-500 mb-6 relative z-10">Volume des demandes par catégorie</p>
         
@@ -680,7 +670,7 @@ function StatsTab({ stats }: { stats: Stats }) {
               </BarChart>
             </ResponsiveContainer>
           ) : (
-            <div className="flex items-center justify-center h-full text-gray-400 font-medium bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">
+            <div className="flex items-center justify-center h-full text-gray-400 font-medium bg-gray-50/50 rounded-lg border border-dashed border-gray-200">
               Aucune donnée d'acte disponible
             </div>
           )}

@@ -14,10 +14,9 @@ export default function Home() {
   // Wait until we know the session status to avoid flickering the Landing/Dashboard
   if (status === "loading") {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-ivoire">
-        <div className="relative">
-          <div className="absolute -inset-4 bg-ivorange-500/20 rounded-full blur-xl animate-pulse"></div>
-          <Loader2 className="h-12 w-12 animate-spin text-ivorange-500 relative z-10" />
+      <div className="min-h-screen flex items-center justify-center bg-[#f7f8f5] surface-grid">
+        <div className="flex h-16 w-16 items-center justify-center rounded-lg border border-gray-200 bg-white shadow-lg">
+          <Loader2 className="h-8 w-8 animate-spin text-ivorange-500" />
         </div>
       </div>
     )
@@ -33,7 +32,7 @@ export default function Home() {
         <div className="absolute top-6 left-6 z-50">
           <button 
             onClick={() => setShowLogin(false)}
-            className="flex items-center gap-2 text-ivgreen-700 hover:text-ivgreen-900 bg-white/90 backdrop-blur-md px-5 py-2.5 rounded-full shadow-[0_4px_20px_-4px_rgba(0,158,96,0.15)] transition-all hover:scale-105 border border-ivgreen-100 font-semibold text-sm"
+            className="flex items-center gap-2 text-ivgreen-700 hover:text-ivgreen-900 bg-white/95 backdrop-blur-md px-5 py-2.5 rounded-lg shadow-sm transition-all hover:-translate-y-0.5 border border-ivgreen-100 font-semibold text-sm"
           >
             <ArrowLeft className="h-4 w-4" />
             Retour à l'accueil

@@ -31,7 +31,7 @@ export function Sidebar({ activeTab, setActiveTab, userRole, onLogout }: Sidebar
   const visibleTabs = tabs.filter(tab => tab.roles.includes(userRole))
 
   return (
-    <aside className="w-64 bg-white/80 backdrop-blur-sm border-r border-gray-100 min-h-[calc(100vh-80px)] flex flex-col hidden md:flex">
+    <aside className="w-64 bg-white/95 border-r border-gray-200 min-h-[calc(100vh-80px)] flex-col hidden md:flex">
       <div className="p-3 space-y-1 flex-1 mt-2">
         {visibleTabs.map((tab) => {
           const isActive = activeTab === tab.id
@@ -39,14 +39,14 @@ export function Sidebar({ activeTab, setActiveTab, userRole, onLogout }: Sidebar
             <Button
               key={tab.id}
               variant="ghost"
-              className={`w-full justify-start h-11 rounded-xl transition-all duration-200 ${
+              className={`w-full justify-start h-11 rounded-lg transition-all duration-200 ${
                 isActive 
-                  ? "bg-ivorange-50 text-ivorange-600 hover:bg-ivorange-100" 
+                  ? "bg-ivorange-50 text-ivorange-700 hover:bg-ivorange-100 shadow-sm"
                   : "text-gray-500 hover:text-gray-900 hover:bg-gray-50"
               }`}
               onClick={() => setActiveTab(tab.id)}
             >
-              <div className={`mr-3 p-1.5 rounded-lg ${isActive ? 'bg-ivorange-100 text-ivorange-500' : 'text-gray-400'}`}>
+              <div className={`mr-3 p-1.5 rounded-md ${isActive ? 'bg-white text-ivorange-600 shadow-sm' : 'text-gray-400'}`}>
                 <tab.icon className="h-4 w-4" strokeWidth={isActive ? 2.5 : 2} />
               </div>
               <span className={`text-sm ${isActive ? 'font-semibold' : 'font-medium'}`}>{tab.label}</span>
@@ -58,10 +58,10 @@ export function Sidebar({ activeTab, setActiveTab, userRole, onLogout }: Sidebar
       <div className="p-3 border-t border-gray-100">
         <Button
           variant="ghost"
-          className="w-full justify-start text-gray-500 hover:text-red-600 hover:bg-red-50 h-11 rounded-xl transition-all"
+          className="w-full justify-start text-gray-500 hover:text-red-600 hover:bg-red-50 h-11 rounded-lg transition-all"
           onClick={onLogout}
         >
-          <div className="mr-3 p-1.5 rounded-lg text-gray-400">
+          <div className="mr-3 p-1.5 rounded-md text-gray-400">
             <LogOut className="h-4 w-4" />
           </div>
           <span className="text-sm font-medium">Déconnexion</span>

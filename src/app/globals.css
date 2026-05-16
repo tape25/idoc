@@ -163,13 +163,13 @@
 
 @layer utilities {
   .glass {
-    @apply bg-white/70 backdrop-blur-md border border-white/40 shadow-[0_8px_32px_0_rgba(0,0,0,0.05)];
+    @apply bg-white/90 backdrop-blur-md border border-gray-200 shadow-sm;
   }
   .glass-dark {
     @apply bg-black/40 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)];
   }
   .glass-card {
-    @apply bg-white/80 backdrop-blur-lg border border-white/50 shadow-sm hover:shadow-md transition-all duration-300;
+    @apply bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300;
   }
   .glass-ivgreen {
     @apply bg-ivgreen-900/80 backdrop-blur-xl border border-ivgreen-700/50 shadow-2xl;
@@ -180,6 +180,12 @@
   }
   .bg-gradient-ivoire {
     @apply bg-gradient-to-br from-ivory-50 via-white to-ivgreen-50;
+  }
+  .surface-grid {
+    background-image:
+      linear-gradient(rgba(15, 23, 42, 0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(15, 23, 42, 0.035) 1px, transparent 1px);
+    background-size: 48px 48px;
   }
   
   /* Masquer la scrollbar tout en gardant le scroll */

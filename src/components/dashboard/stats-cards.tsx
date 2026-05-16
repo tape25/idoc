@@ -65,23 +65,23 @@ export function StatsCards({ stats, role }: StatsCardsProps) {
   const statsData = getStatsForRole()
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
       {statsData.map((stat, index) => {
         const Icon = stat.icon
         return (
           <div 
             key={index} 
-            className={`${stat.bgClass} rounded-2xl p-5 border border-gray-100/50 hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 group`}
+            className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md group"
           >
             <div className="flex items-start justify-between mb-4">
-              <div className={`${stat.iconBg} p-2.5 rounded-xl text-white group-hover:scale-110 transition-transform duration-300 shadow-sm`}>
+              <div className={`${stat.iconBg} p-2.5 rounded-lg text-white group-hover:scale-105 transition-transform duration-300 shadow-sm`}>
                 <Icon className="h-5 w-5" strokeWidth={2} />
               </div>
             </div>
             
             <div>
-              <p className="text-sm font-medium text-gray-500 mb-0.5">{stat.label}</p>
-              <p className={`text-3xl font-bold ${stat.textColor}`}>{stat.value as number}</p>
+              <p className="text-xs font-bold uppercase tracking-[0.12em] text-gray-500 mb-1">{stat.label}</p>
+              <p className={`text-3xl font-extrabold ${stat.textColor}`}>{Number(stat.value)}</p>
             </div>
           </div>
         )

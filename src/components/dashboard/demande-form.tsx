@@ -115,13 +115,13 @@ export function DemandeForm({ onClose, onSuccess, editDemande }: DemandeFormProp
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-lg bg-white rounded-3xl border-gray-100 shadow-2xl p-0 overflow-hidden">
+      <DialogContent className="sm:max-w-lg bg-white rounded-lg border-gray-200 shadow-2xl p-0 overflow-hidden">
         <DialogHeader className="p-6 pb-0">
           <div className="flex items-center justify-between">
             <DialogTitle className="text-xl font-bold text-gray-900">
               {isEditing ? "Modifier la demande" : "Nouvelle demande"}
             </DialogTitle>
-            <Button variant="ghost" size="icon" onClick={onClose} className="rounded-full hover:bg-gray-100">
+            <Button variant="ghost" size="icon" onClick={onClose} className="rounded-lg hover:bg-gray-100">
               <X className="h-5 w-5 text-gray-500" />
             </Button>
           </div>
@@ -134,10 +134,10 @@ export function DemandeForm({ onClose, onSuccess, editDemande }: DemandeFormProp
               value={formData.type} 
               onValueChange={(value) => setFormData({ ...formData, type: value })}
             >
-              <SelectTrigger className="h-12 rounded-xl border-gray-200 focus:border-ivorange-500">
+              <SelectTrigger className="h-12 rounded-lg border-gray-200 focus:border-ivorange-500">
                 <SelectValue placeholder="Sélectionnez un type" />
               </SelectTrigger>
-              <SelectContent className="rounded-xl">
+              <SelectContent className="rounded-lg">
                 {typesDemande.map((type) => (
                   <SelectItem key={type.value} value={type.value}>
                     {type.label}
@@ -155,7 +155,7 @@ export function DemandeForm({ onClose, onSuccess, editDemande }: DemandeFormProp
               onChange={(e) => setFormData({ ...formData, titre: e.target.value })}
               placeholder="Ex: Demande d'attestation de travail"
               required
-              className="h-12 rounded-xl border-gray-200 focus:border-ivorange-500"
+              className="h-12 rounded-lg border-gray-200 focus:border-ivorange-500"
             />
           </div>
 
@@ -167,7 +167,7 @@ export function DemandeForm({ onClose, onSuccess, editDemande }: DemandeFormProp
               onChange={(e) => setFormData({ ...formData, motif: e.target.value })}
               placeholder="Décrivez le motif de votre demande..."
               rows={3}
-              className="rounded-xl border-gray-200 focus:border-ivorange-500 resize-none"
+              className="rounded-lg border-gray-200 focus:border-ivorange-500 resize-none"
             />
           </div>
 
@@ -179,7 +179,7 @@ export function DemandeForm({ onClose, onSuccess, editDemande }: DemandeFormProp
                 type="date"
                 value={formData.dateDebut}
                 onChange={(e) => setFormData({ ...formData, dateDebut: e.target.value })}
-                className="h-12 rounded-xl border-gray-200 focus:border-ivorange-500"
+                className="h-12 rounded-lg border-gray-200 focus:border-ivorange-500"
               />
             </div>
             <div className="space-y-2">
@@ -189,7 +189,7 @@ export function DemandeForm({ onClose, onSuccess, editDemande }: DemandeFormProp
                 type="date"
                 value={formData.dateFin}
                 onChange={(e) => setFormData({ ...formData, dateFin: e.target.value })}
-                className="h-12 rounded-xl border-gray-200 focus:border-ivorange-500"
+                className="h-12 rounded-lg border-gray-200 focus:border-ivorange-500"
               />
             </div>
           </div>
@@ -199,13 +199,13 @@ export function DemandeForm({ onClose, onSuccess, editDemande }: DemandeFormProp
               type="button" 
               variant="outline" 
               onClick={onClose}
-              className="flex-1 h-12 rounded-xl border-gray-200 text-gray-600 hover:bg-gray-50"
+              className="flex-1 h-12 rounded-lg border-gray-200 text-gray-600 hover:bg-gray-50"
             >
               Annuler
             </Button>
             <Button 
               type="submit" 
-              className="flex-1 h-12 rounded-xl bg-ivorange-500 hover:bg-ivorange-600 text-white shadow-lg shadow-ivorange-500/25"
+              className="flex-1 h-12 rounded-lg bg-ivorange-500 hover:bg-ivorange-600 text-white shadow-lg shadow-ivorange-900/10"
               disabled={loading || !formData.type || !formData.titre}
             >
               {loading ? (
